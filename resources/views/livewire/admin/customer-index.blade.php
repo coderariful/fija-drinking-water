@@ -1,0 +1,204 @@
+<div class="row" x-data="{}">
+    <div class="col-12">
+        <div class="card card-dark bg-dark">
+            <div class="card-header d-block">
+                <form action="{{route('print.customer-list')}}" @submit.prevent="const urlParams=new URLSearchParams(new FormData($el)).toString();window.open(`${$el.action}?${urlParams}`,'_blank')">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
+                        <h6 class="card-title">{{$title}}</h6>
+                        <button type="button" class="btn btn-danger" onclick="return confirm('{{trans('Are you sure?')}}') || event.stopImmediatePropagation()" wire:click.prevent="sendToAll">{{trans('Send SMS to All')}}</button>
+                        <input type="hidden" name="showDue" wire:model="showDue">
+                        @if($showDue)
+                        <button type="button" class="btn btn-primary" wire:click.prevent="filterDue(false)">{{trans('Show All')}}</button>
+                        @else
+                        <button type="button" class="btn btn-primary" wire:click.prevent="filterDue(true)">{{trans('Show Due')}}</button>
+                        @endif
+                        <select class="form-control w-25" wire:model="employee_id" name="employee_id">
+                            <option value="">All</option>
+                            @foreach($employees as $employee)
+                                <option value="{{$employee->id}}">{{$employee->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="input-group row">
+                            <input type="date" class="form-control w-25" wire:model="start_date" name="start_date">
+                            <input type="date" class="form-control w-25" wire:model="end_date" name="end_date">
+                            <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.debounce="keyword" name="keyword">
+                            <button class="ml-1 btn btn-success">Print</button>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive style-scroll">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="align-middle text-center" rowspan="2" scope="col">{{__('S/N')}}</th>
+                            <th class="align-middle" rowspan="2" scope="col"></th>
+                            <th class="align-middle" rowspan="2" scope="col">{{ __('Employee') }}</th>
+                            <th class="align-middle" rowspan="2" scope="col">{{ __('Customer') }}</th>
+                            <th class="align-middle text-center py-0" colspan="2" scope="col">{{ __('Jar') }}</th>
+                            <th class="align-middle text-center" rowspan="2" scope="col">{{ __('Due') }}</th>
+                            <th class="align-middle text-center" rowspan="2" scope="col">{{ __('Issue Date') }} <br> {{ __('Billing Type') }}</th>
+                            <th class="align-middle text-center" rowspan="2" scope="col">{{ __('Status') }}</th>
+                            <th class="align-middle" rowspan="2" scope="col">{{ __('Action') }}</th>
+                        </tr>
+                        <tr>
+                            <th scope="col" class="text-center align-middle py-0">{{ __('Rate') }}</th>
+                            <th scope="col" class="text-center align-middle py-0">{{ __('Stock') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @forelse($customers as $customer)
+{{--                            @dd($customer)--}}
+                            <tr>
+                                <th class="text-center">{{ paginationIndex($customers, $loop->iteration) }}</th>
+                                <td nowrap>
+                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$emitTo('sell-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                        <i class="material-icons">shopping_basket</i>
+                                    </button>
+                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Payment" data-toggle="modal" data-target="#paymentModal" wire:click="$emitTo('payment-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                        <i class="material-icons">account_balance_wallet</i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-info btn-circle" title="Purchase History" data-toggle="modal" data-target="#historyModal" wire:click="$emitTo('purchase-history-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                        <i class="material-icons">assignment</i>
+                                    </button>
+                                </td>
+                                <td>{{ $customer->user?->name??'-'}}</td>
+                                <td>
+                                    <strong>{{trans('Name')}}:</strong> {{ $customer->name??''}} <br>
+                                    <strong>{{trans('Phone')}}:</strong> {{ $customer->phone??'' }} <br>
+                                    <strong>{{trans('Address')}}:</strong> <span title="{{$customer->address}}">{{ str($customer->address??'')->limit(20) }}</span>
+                                </td>
+                                <td class="text-center">{{ $customer->jar_rate??'-' }}</td>
+                                <td class="text-center">{{ $customer->jar_stock }}</td>
+                                <td class="text-center">{{ $customer->due_amount }}</td>
+                                <td class="text-center">{{ formatDate($customer->issue_date, DATE_FORMAT) }} <br> {{ str($customer->billing_type??'')->upper() }}</td>
+                                <td class="text-center">
+                                    @if($customer->status == CUSTOMER_PENDING)
+                                        <select class="bg-warning px-2 py-1 text-center rounded border-0 w-100" @change="$wire.update_status({{$customer->id}}, $el.value)">
+                                            <option class="text-center text-white bg-warning" value="{{CUSTOMER_PENDING}}">PENDING</option>
+                                            <option class="text-center text-white bg-success" value="{{CUSTOMER_APPROVED}}">APPROVE</option>
+                                            <option class="text-center text-white bg-danger" value="{{CUSTOMER_REJECTED}}">REJECT</option>
+                                        </select>
+                                    @elseif($customer->status == CUSTOMER_APPROVED)
+                                        <div class="bg-success px-2 py-1 text-center rounded">APPROVED</div>
+                                    @elseif($customer->status == CUSTOMER_REJECTED)
+                                        <div class="bg-danger px-2 py-1 text-center rounded">REJECTED</div>
+                                    @endif
+                                </td>
+                                <td nowrap>
+                                    <button type="button" class="btn btn-sm btn-info btn-circle" title="Send SMS" data-toggle="modal" data-target="#smsModal" wire:click="$emitTo('admin.sms-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                        <i class="material-icons">send</i>
+                                    </button>
+                                    <a href="{{route('admin.customer.edit',$customer->id)}}" class="btn btn-sm btn-success btn-circle" title="Edit" data-bs-toggle="tooltip" data-placement="top">
+                                        <i class="material-icons">edit</i>
+                                    </a>
+                                    <button type="submit" class="btn btn-sm btn-danger btn-circle" form="delete-{{$customer->id}}" title="Delete" onclick="return confirm('Are you sure, would you like to delete tha user?');" data-bs-toggle="tooltip" data-placement="top">
+                                        <i class="material-icons">delete</i>
+                                    </button>
+                                    <form action="{{route('admin.customer.destroy',$customer->id)}}" method="POST" id="delete-{{$customer->id}}"> @csrf @method('DELETE') </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="py-3 text-center" colspan="11">No customer found</td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer justify-content-end">
+                {{ $customers->links('livewire::bootstrap') }}
+            </div>
+        </div>
+    </div>
+    <!-- Modals -->
+    <div class="modal fade" id="smsModal" tabindex="-1" aria-labelledby="smsModalLabel" aria-hidden="true" wire:ignore>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="smsModalLabel">Send SMS</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <livewire:admin.sms-modal/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="sellModal" tabindex="-1" aria-labelledby="sellModalLabel" aria-hidden="true" wire:ignore>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sellModalLabel">Add Sell</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <livewire:sell-modal/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true" wire:ignore>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Add Payment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <livewire:payment-modal/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true" wire:ignore>
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="historyModalLabel">Purchase History</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <livewire:purchase-history-modal/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+    <script>
+        $(function() {
+            $(document).on('sms-sent', function() {
+                console.log('Sms sent');
+                $("#sms_message").val("");
+            });
+        });
+    </script>
+@endpush
