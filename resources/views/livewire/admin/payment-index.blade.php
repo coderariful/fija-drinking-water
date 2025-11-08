@@ -7,7 +7,7 @@
                         <h6 class="card-title">{{$title}}</h6>
                     </div>
                     <div class="col-md-6 col-sm-12">
-                        <input type="text" class="form-control" placeholder="Search Customer by Name or Phone" wire:model.debounce="keyword">
+                        <input type="text" class="form-control" placeholder="Search Customer by Name or Phone" wire:model.live.debounce="keyword">
                     </div>
 
                 </div>
@@ -16,7 +16,7 @@
                 <div class="mb-3">
                     <div class="row">
                         <div class="col-md-3">
-                            <select class="form-control" wire:model.lazy="employee_id">
+                            <select class="form-control" wire:model.blur="employee_id">
                                 <option value="">Select Employee</option>
                                 @foreach($employees as $employee)
                                     <option value="{{$employee->id}}">{{$employee->name}}</option>
@@ -24,7 +24,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control" wire:model.lazy="customer_id">
+                            <select class="form-control" wire:model.blur="customer_id">
                                 <option value="">Select Customer</option>
                                 @foreach($customers as $customer)
                                     <option value="{{$customer->id}}">{{$customer->name}}</option>
@@ -32,7 +32,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control" wire:model.lazy="product_id">
+                            <select class="form-control" wire:model.blur="product_id">
                                 <option value="">Select Product</option>
                                 @foreach($products as $product)
                                     <option value="{{$product->id}}">{{$product->name}}</option>
@@ -50,19 +50,19 @@
                         <div class="col-md-3" x-show="type=='day'">
                             <div class="input-group">
                                 <span class="input-group-text bg-white text-dark">Date</span>
-                                <input type="date" class="form-control" wire:model="only_date">
+                                <input type="date" class="form-control" wire:model.live="only_date">
                             </div>
                         </div>
                         <div class="col-md-3" x-show="type=='range'">
                             <div class="input-group">
                                 <span class="input-group-text bg-white text-dark">From</span>
-                                <input type="date" class="form-control" wire:model="start_date">
+                                <input type="date" class="form-control" wire:model.live="start_date">
                             </div>
                         </div>
                         <div class="col-md-3" x-show="type=='range'">
                             <div class="input-group">
                                 <span class="input-group-text bg-white text-dark">To</span>
-                                <input type="date" class="form-control" wire:model="end_date">
+                                <input type="date" class="form-control" wire:model.live="end_date">
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                                     </span>
 
                                     <span class="form-group my-1" x-bind:class="{'d-flex': edit}" x-show="edit" x-on:entryUpdated="edit=false">
-                                        <input type="date" class="border-0 form-control-sm" style="width:100px;font-size:14px;" value="{{$sale->created_at?->format('Y-m-d')}}" wire:model.defer="date_created.{{$sale->id}}">
+                                        <input type="date" class="border-0 form-control-sm" style="width:100px;font-size:14px;" value="{{$sale->created_at?->format('Y-m-d')}}" wire:model="date_created.{{$sale->id}}">
                                         <button wire:click="saveDateUpdate({{$sale->id}})" x-on:click.debounce="edit=false" class="border-0 text-white bg-success">
                                             <i class="fa fa-check" wire:loading.attr="hidden" wire:target="saveDateUpdate({{$sale->id}})"></i>
                                             <span class="fa fa-spinner fa-spin" wire:loading wire:target="saveDateUpdate({{$sale->id}})"></span>
@@ -118,7 +118,7 @@
                                     </span>
 
                                     <span class="form-group my-1 justify-content-center" x-bind:class="{'d-flex': edit}" x-show="edit" x-on:entryUpdated="edit=false">
-                                        <input type="number" min="1" class="border-0 form-control-sm text-center" style="width:70px;font-size:14px;" value="{{$sale->amount}}" wire:model.defer="amounts.{{$sale->id}}">
+                                        <input type="number" min="1" class="border-0 form-control-sm text-center" style="width:70px;font-size:14px;" value="{{$sale->amount}}" wire:model="amounts.{{$sale->id}}">
                                         <button wire:click="saveAmountUpdate({{$sale->id}})" x-on:click.debounce="edit=false" class="border-0 text-white bg-success">
                                             <i class="fa fa-check" wire:loading.attr="hidden" wire:target="saveAmountUpdate({{$sale->id}})"></i>
                                             <span class="fa fa-spinner fa-spin" wire:loading wire:target="saveAmountUpdate({{$sale->id}})"></span>

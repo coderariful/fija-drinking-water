@@ -16,7 +16,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
     <!------------------------------------------------------------------------------------------------>
     <!-- FAVICON  -->
-    <link rel="icon" type="image/png" sizes="16x16"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('backend/assets/img/logo/logo.png') }}"/>
 {{--        href="{{ $logoFavicon ? asset($logoFavicon->favicon): asset('backend/assets/img/favicon/favicon.png') }}" />--}}
     <!-- BOOTSTRAP - V 4.0.0 -->
     <link rel="stylesheet" href="{{asset('bootstrap/css/bootstrap.min.css')}}" />
@@ -52,8 +52,6 @@
     @livewireStyles
 
     @stack('css')
-
-    <script defer src="{{asset('js/alpinejs@3.11.1.min.js')}}"></script>
 </head>
 
 <body>
@@ -198,7 +196,7 @@
     <script>
         $(function () {
             $('[data-bs-toggle="tooltip"]').tooltip()
-        })
+        });
     </script>
 
     @stack('scripts')

@@ -105,7 +105,7 @@ class SalesIndex extends Component
 
             flash(trans('Sale quantity entry updated!'));
 
-            $this->dispatchBrowserEvent('entryUpdated');
+            $this->dispatch('entryUpdated');
         } catch (Exception $e) {
             toastr($e->getMessage() . "<br>Please try again!", 'error', 'Server Error');
         }
@@ -129,7 +129,7 @@ class SalesIndex extends Component
 
             flash(trans('Sale date updated!'));
 
-            $this->dispatchBrowserEvent('entryUpdated');
+            $this->dispatch('entryUpdated');
         } catch (Exception $e) {
             toastr($e->getMessage() . "<br>Please try again!", 'error', 'Server Error');
         }

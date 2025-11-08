@@ -17,7 +17,7 @@
                 <div class="card-header">
                     <h6 class="card-title">{{$title}}</h6>
                 </div>
-                <form method="POST" wire:submit.prevent="submit">
+                <form method="POST" wire:submit="submit">
                     @csrf
                     <div class="card-body">
                         <div class="row">
@@ -25,7 +25,7 @@
 
                                 <div class="form-group">
                                     <label for="name" class="card-title font-weight-bold">{{__('Template Name:')}}</label>
-                                    <input type="text" id="name" class="form-control" placeholder="{{__('Template Name')}}" wire:model.defer="name">
+                                    <input type="text" id="name" class="form-control" placeholder="{{__('Template Name')}}" wire:model="name">
                                     @error ('name')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -42,7 +42,7 @@
 
                                 <div class="form-group">
                                     <label for="body" class="card-title font-weight-bold">{{__('Template Body:')}}</label>
-                                    <textarea name="body" id="body" class="form-control" placeholder="{{__('Template Body')}}" wire:model.defer="body"></textarea>
+                                    <textarea name="body" id="body" class="form-control" placeholder="{{__('Template Body')}}" wire:model="body"></textarea>
                                     @error ('name')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror

@@ -44,8 +44,9 @@ class CustomerIndex extends Component
 
     public function render(): Factory|View|Application
     {
+        $customers = $this->getCustomers();
         return view('livewire.admin.customer-index', [
-            'customers' => $this->getCustomers(),
+            'customers' => $customers,
             'employees' => $this->getEmployees(),
         ]);
     }
@@ -54,7 +55,7 @@ class CustomerIndex extends Component
     {
         $purchaseWater = ['purchase'=>'whereProductTypeWater'];
 
-        return Customer::query()
+        $query = Customer::query()
             ->when($this->keyword, function (Builder $builder, $keyword) {
                 $builder->where('name', 'like', "%$keyword%")
                     ->orWhere('phone', 'like', "%$keyword%");
@@ -83,8 +84,9 @@ class CustomerIndex extends Component
             ->withSum('payments', 'amount')
             ->withSum($purchaseWater, 'in_quantity')
             ->withSum($purchaseWater, 'out_quantity')
-            ->latest('id')
-            ->paginate(RECORDS_PER_PAGE);
+            ->latest('id');
+
+        return $query->paginate(RECORDS_PER_PAGE);
     }
 
     public function getEmployees()

@@ -27,7 +27,7 @@
         <div class="form-group{{auth_user()->isAdmin()?' col-6':' col-12'}}">
             <label for="pay_amount">Pay Amount</label>
             <input id="pay_amount" type="number" step="any" class="form-control form-control-lg bg-white text-dark"
-                   wire:model.defer="pay_amount" min="0"/>
+                   wire:model="pay_amount" min="0"/>
             @error('pay_amount')
             <span class="text-danger">{{$message}}</span>
             @enderror
@@ -36,7 +36,7 @@
             <div class="form-group col-6">
                 <label for="date">Date</label>
                 <input id="date" type="date" class="form-control form-control-lg bg-white text-dark"
-                       wire:model.defer="date" min="0"/>
+                       wire:model="date" min="0"/>
                 @error('date')
                 <span class="text-danger">{{$message}}</span>
                 @enderror
@@ -45,7 +45,7 @@
     </div>
     <div class="form-group">
         <label for="note">Note</label>
-        <input id="note" type="text" class="form-control" wire:model.defer="note" placeholder="Write a note"/>
+        <input id="note" type="text" class="form-control" wire:model="note" placeholder="Write a note"/>
         @error('note')
         <span class="text-danger">{{$message}}</span>
         @enderror

@@ -48,7 +48,7 @@ class SmsModal extends Component
                 flash("Message sent successfully.");
 
                 $this->reset(['message']);
-                $this->dispatchBrowserEvent('sms-sent');
+                $this->dispatch('sms-sent');
             }
         }
     }

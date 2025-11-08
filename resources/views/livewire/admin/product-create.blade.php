@@ -17,7 +17,7 @@
                 <div class="card-header">
                     <h6 class="card-title">{{$title}}</h6>
                 </div>
-                <form method="POST" wire:submit.prevent="submit">
+                <form method="POST" wire:submit="submit">
                     @csrf
                     <div class="card-body">
                         <x-admin.product-form/>
@@ -27,7 +27,6 @@
                         </div>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>

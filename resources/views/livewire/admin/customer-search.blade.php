@@ -1,7 +1,7 @@
 <div x-data="{}">
     <div class="row justify-content-center">
         <div class="col-md-6 d-flex gap-5">
-            <input type="text" class="form-control" placeholder="Search customer" wire:model="keyword">
+            <input type="text" class="form-control" placeholder="Search customer" wire:model.live="keyword">
             <a href="{{route('admin.customer.create')}}" class="btn btn-primary ml-3">Add Customer</a>
         </div>
         <div class="col-md-12">
@@ -51,13 +51,13 @@
                                         @endif
                                     </td>
                                     <td nowrap>
-                                        <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$emitTo('sell-modal', 'open-modal', {{$customer->id}})">
+                                        <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$dispatchTo('sell-modal', 'open-modal', {{$customer->id}})">
                                             <i class="material-icons">shopping_basket</i>
                                         </button>
-                                        <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Payment" data-toggle="modal" data-target="#paymentModal" wire:click="$emitTo('payment-modal', 'open-modal', {{$customer->id}})">
+                                        <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Payment" data-toggle="modal" data-target="#paymentModal" wire:click="$dispatchTo('payment-modal', 'open-modal', {{$customer->id}})">
                                             <i class="material-icons">account_balance_wallet</i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-info btn-circle" title="Purchase History" data-toggle="modal" data-target="#historyModal" wire:click="$emitTo('purchase-history-modal', 'open-modal', {{$customer->id}})">
+                                        <button type="button" class="btn btn-sm btn-info btn-circle" title="Purchase History" data-toggle="modal" data-target="#historyModal" wire:click="$dispatchTo('purchase-history-modal', 'open-modal', {{$customer->id}})">
                                             <i class="material-icons">assignment</i>
                                         </button>
                                         @if(auth()->user()->user_type==0)

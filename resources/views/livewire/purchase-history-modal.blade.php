@@ -1,4 +1,4 @@
-<div x-data="{type:@entangle('filterType')}">
+<div x-data="{type:@entangle('filterType').live}">
     <div class="mb-3">
         @if($customer)
             <div class="pt-2">
@@ -33,21 +33,21 @@
                 <option value="date">{{trans('Date Wise')}}</option>
             </select>
             <span class="input-group-text" x-show="type=='month'">Year</span>
-            <select class="form-control" wire:model="year" x-show="type=='month'">
+            <select class="form-control" wire:model.live="year" x-show="type=='month'">
                 @for($y=2022; $y <= today()->format('Y'); $y++)
                     <option value="{{$y}}">{{$y}}</option>
                 @endfor
             </select>
             <span class="input-group-text" x-show="type=='month'">{{trans('Month')}}</span>
-            <select class="form-control" wire:model="month" x-show="type=='month'">
+            <select class="form-control" wire:model.live="month" x-show="type=='month'">
                 @for($m=1; $m<=12; $m++)
                     <option value="{{date('n', mktime(0,0,0,$m, 1, date('Y')))}}">{{date('F', mktime(0,0,0,$m, 1, date('Y')))}}</option>
                 @endfor
             </select>
             <span class="input-group-text" x-show="type=='date'">{{trans('From')}}</span>
-            <input type="date" class="form-control" wire:model="start_date" x-show="type=='date'"/>
+            <input type="date" class="form-control" wire:model.live="start_date" x-show="type=='date'"/>
             <span class="input-group-text" x-show="type=='date'">{{trans('To')}}</span>
-            <input type="date" class="form-control" wire:model="end_date" x-show="type=='date'"/>
+            <input type="date" class="form-control" wire:model.live="end_date" x-show="type=='date'"/>
         </div>
     </div>
     <div class="mb-3">

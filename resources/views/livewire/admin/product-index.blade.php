@@ -20,7 +20,8 @@
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div class="input-group">
-                                <input type="text" class="form-control py-2" name="keyword" placeholder="Search product by name, type or sku" wire:model.debounce="keyword" required>
+                                <input type="text" class="form-control py-2" name="keyword" placeholder="Search product by name, type or sku"
+                                       wire:model.live.debounce="keyword" required>
                                 <button class="d-md-none button button-purple px-3"><i class="fa fa-search"></i></button>
                             </div>
                         </div>

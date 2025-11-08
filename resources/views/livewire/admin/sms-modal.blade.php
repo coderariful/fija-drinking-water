@@ -22,7 +22,8 @@
     </div>
     <div x-show="show" class="mt-4 mb-2 px-3">
         <label for="sms_message">Message</label>
-        <textarea class="form-control" id="sms_message" placeholder="Write the message" x-model="message" wire:model.defer="message" required></textarea>
+        <textarea class="form-control" id="sms_message" placeholder="Write the message" x-model="message"
+                  wire:model="message" required></textarea>
         <div class="d-flex justify-content-between">
             <div class="text-left">
                 @error('message')

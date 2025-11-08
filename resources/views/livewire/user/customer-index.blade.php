@@ -13,9 +13,9 @@
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="input-group row">
-                            <input type="date" class="form-control w-25" wire:model="start_date">
-                            <input type="date" class="form-control w-25" wire:model="end_date">
-                            <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.debounce="keyword">
+                            <input type="date" class="form-control w-25" wire:model.live="start_date">
+                            <input type="date" class="form-control w-25" wire:model.live="end_date">
+                            <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.live.debounce="keyword">
                         </div>
                     </div>
 
@@ -47,13 +47,13 @@
                             <tr>
                                 <th>{{ paginationIndex($customers, $loop->iteration) }}</th>
                                 <td nowrap>
-                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$emitTo('sell-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$dispatchTo('sell-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">shopping_basket</i>
                                     </button>
-                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Payment" data-toggle="modal" data-target="#paymentModal" wire:click="$emitTo('payment-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Payment" data-toggle="modal" data-target="#paymentModal" wire:click="$dispatchTo('payment-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">account_balance_wallet</i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-info btn-circle" title="Purchase History" data-toggle="modal" data-target="#historyModal" wire:click="$emitTo('purchase-history-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                    <button type="button" class="btn btn-sm btn-info btn-circle" title="Purchase History" data-toggle="modal" data-target="#historyModal" wire:click="$dispatchTo('purchase-history-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">assignment</i>
                                     </button>
                                 </td>

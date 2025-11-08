@@ -29,7 +29,7 @@
     </span>
     @if(auth()->user()->isAdmin())
     <span class="form-group my-0 justify-content-center" x-bind:class="{'d-flex': edit}" x-show="edit" x-on:entryUpdated="edit=false">
-        <input type="{{$inputType}}" @class($inputClass) wire:model.defer="{{$model}}.{{$itemId}}" @style($inputStyle) @if($inputType=='number') min="0" @endif>
+        <input type="{{$inputType}}" @class($inputClass) wire:model="{{$model}}.{{$itemId}}" @style($inputStyle) @if($inputType=='number') min="0" @endif>
         <button wire:click="{{$method}}({{$itemId}})" x-on:click.debounce="edit=false" class="border-0 text-white bg-success">
             <i class="fa fa-check" wire:loading.attr="hidden" wire:target="{{$method}}({{$itemId}})"></i>
             <span class="fa fa-spinner fa-spin" wire:loading wire:target="{{$method}}({{$itemId}})"></span>

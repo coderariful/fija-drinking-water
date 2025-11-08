@@ -68,7 +68,7 @@ class PaymentIndex extends Component
 
             flash(trans('Sale quantity entry updated!'));
 
-            $this->dispatchBrowserEvent('entryUpdated');
+            $this->dispatch('entryUpdated');
         } catch (Exception $e) {
             toastr($e->getMessage() . "<br>Please try again!", 'error', 'Server Error');
         }
@@ -94,7 +94,7 @@ class PaymentIndex extends Component
 
             flash(trans('Payment date updated!'));
 
-            $this->dispatchBrowserEvent('entryUpdated');
+            $this->dispatch('entryUpdated');
         } catch (Exception $e) {
             toastr($e->getMessage() . "<br>Please try again!", 'error', 'Server Error');
         }

@@ -60,17 +60,17 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('customer', CustomerController::class);
 
         Route::prefix('product')->as('product.')->group(function () {
-            Route::get('', ProductIndex::class)->name('index');
+            Route::get('/', ProductIndex::class)->name('index');
             Route::get('create', ProductCreate::class)->name('create');
             Route::get('{product}/edit', ProductEdit::class)->name('edit');
         });
 
         Route::group(['prefix' => 'sales', 'as' => 'sales.'], function () {
-            Route::get('', SalesIndex::class)->name('index');
+            Route::get('/', SalesIndex::class)->name('index');
         });
 
         Route::group(['prefix' => 'payments', 'as' => 'payments.'], function () {
-            Route::get('', PaymentIndex::class)->name('index');
+            Route::get('/', PaymentIndex::class)->name('index');
         });
 
         Route::get('sms-template', SmsTemplateIndex::class)->name('sms-template');
@@ -85,13 +85,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('customer/search', CustomerSearch::class)->name('customer.search');
         Route::resource('customer', CustomersController::class);
 
-
         Route::group(['prefix' => 'sales', 'as' => 'sales.'], function () {
-            Route::get('', UserSalesIndex::class)->name('index');
+            Route::get('/', UserSalesIndex::class)->name('index');
         });
 
         Route::group(['prefix' => 'payments', 'as' => 'payments.'], function () {
-            Route::get('', UserPaymentIndex::class)->name('index');
+            Route::get('/', UserPaymentIndex::class)->name('index');
         });
 
         Route::get('money/details', [UserController::class, 'moneyDetails'])->name('money.details');

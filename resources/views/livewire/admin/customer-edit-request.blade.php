@@ -5,7 +5,7 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
                         <h6 class="card-title">{{$title}}</h6>
-                        <select class="form-control w-25" wire:model="employee_id">
+                        <select class="form-control w-25" wire:model.live="employee_id">
                             <option value="">All</option>
                             @foreach($employees as $employee)
                                 <option value="{{$employee->id}}">{{$employee->name}}</option>
@@ -14,9 +14,9 @@
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <div class="input-group row">
-                            <input type="date" class="form-control w-25" wire:model="start_date">
-                            <input type="date" class="form-control w-25" wire:model="end_date">
-                            <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.debounce="keyword">
+                            <input type="date" class="form-control w-25" wire:model.live="start_date">
+                            <input type="date" class="form-control w-25" wire:model.live="end_date">
+                            <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.live.debounce="keyword">
                         </div>
                     </div>
 

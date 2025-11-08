@@ -17,40 +17,43 @@ class PurchaseHistoryModal extends Component
 {
     public ?Customer $customer = null;
 
+    protected $listeners = [
+        'open-modal' => 'loadData'
+    ];
     public $filterType='month';
     public $month;
     public $year;
     public $start_date;
     public $end_date;
-
-    protected $listeners = [
-        'open-modal' => 'loadData'
-    ];
     public $date_created = [];
     public $in_quantity = [];
     public $out_quantity = [];
     public $payment = [];
 
-    public function mount()
+    public function mount(): void
     {
         $this->month = date('n');
         $this->year = date('Y');
     }
 
-    public function updatedFilterType($value)
+    public function updatedFilterType($value): void
     {
         switch ($value) {
             case 'date':
+            {
                 $this->reset(['month', 'year']);
                 $this->start_date = today()->subMonth()->format('Y-m-d');
                 $this->end_date = today()->format('Y-m-d');
                 break;
+            }
             case 'month':
             default:
+            {
                 $this->reset(['start_date', 'end_date']);
                 $this->month = date('n');
                 $this->year = date('Y');
                 break;
+            }
         }
 
     }
@@ -60,7 +63,7 @@ class PurchaseHistoryModal extends Component
         $this->customer = $customer;
     }
 
-    public function saveDateUpdate(Purchase $purchase)
+    public function saveDateUpdate(Purchase $purchase): void
     {
         try {
             $purchase->created_at = $this->date_created[$purchase->id];
@@ -78,13 +81,13 @@ class PurchaseHistoryModal extends Component
 
             flash(trans('History date updated.'));
 
-            $this->dispatchBrowserEvent('entryUpdated');
+            $this->dispatch('entryUpdated');
         } catch (Exception $e) {
             toastr($e->getMessage() . "<br>Please try again!", 'error', 'Server Error');
         }
     }
 
-    public function saveIssueUpdate(Purchase $purchase)
+    public function saveIssueUpdate(Purchase $purchase): void
     {
         try {
             $purchase->in_quantity = $this->in_quantity[$purchase->id];
@@ -99,13 +102,13 @@ class PurchaseHistoryModal extends Component
 
             flash(trans('History issue entry updated.'));
 
-            $this->dispatchBrowserEvent('entryUpdated');
+            $this->dispatch('entryUpdated');
         } catch (Exception $e) {
             toastr($e->getMessage() . "<br>Please try again!", 'error', 'Server Error');
         }
     }
 
-    public function saveReturnUpdate(Purchase $purchase)
+    public function saveReturnUpdate(Purchase $purchase): void
     {
         try {
             $purchase->out_quantity = $this->out_quantity[$purchase->id];
@@ -113,13 +116,13 @@ class PurchaseHistoryModal extends Component
 
             flash(trans('History return entry updated.'));
 
-            $this->dispatchBrowserEvent('entryUpdated');
+            $this->dispatch('entryUpdated');
         } catch (Exception $e) {
             toastr($e->getMessage() . "<br>Please try again!", 'error', 'Server Error');
         }
     }
 
-    public function savePaymentUpdate(Purchase $purchase)
+    public function savePaymentUpdate(Purchase $purchase): void
     {
         try {
             if ($purchase->payment) {
@@ -140,7 +143,7 @@ class PurchaseHistoryModal extends Component
 
             flash(trans('History payment entry updated.'));
 
-            $this->dispatchBrowserEvent('entryUpdated');
+            $this->dispatch('entryUpdated');
         } catch (Exception $e) {
             toastr($e->getMessage() . "<br>Please try again!", 'error', 'Server Error');
         }

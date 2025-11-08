@@ -10,7 +10,7 @@
                         <div class="col-md-6 col-sm-12">
                             <form method="get">
                                 <div class="d-flex justify-content-end">
-                                    <input type="text" class="form-control w-50 py-2" name="keyword" wire:model="keyword" placeholder="Search Employee" aria-label="Search">
+                                    <input type="text" class="form-control w-50 py-2" name="keyword" wire:model.live="keyword" placeholder="Search Employee" aria-label="Search">
                                 </div>
                             </form>
                         </div>
@@ -34,7 +34,7 @@
                                     <td>{{ $user->name??''}}</td>
                                     <td>{{ $user->phone??'' }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-info btn-circle" title="Summery" wire:click.prevent="$emitTo('employee-summery-modal', 'open_modal', {{$user->id}})" data-toggle="modal" data-target="#employeeSummeryModal">
+                                        <button type="button" class="btn btn-sm btn-info btn-circle" title="Summery" wire:click.prevent="$dispatchTo('employee-summery-modal', 'open_modal', {{$user->id}})" data-toggle="modal" data-target="#employeeSummeryModal">
                                             <i class="material-icons">assignment</i>
                                         </button>
 

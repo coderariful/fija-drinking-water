@@ -1,4 +1,4 @@
-<div class="position-relative" x-data="{type:@entangle('filterType')}">
+<div class="position-relative" x-data="{type:@entangle('filterType').live}">
     <div class="mb-3">
         @if($user)
             <div class="pt-2">
@@ -23,7 +23,7 @@
     </div>
     <div class="my-3">
         <div class="input-group">
-            <select class="form-control" wire:model="customer_id" aria-label="All Customer">
+            <select class="form-control" wire:model.live="customer_id" aria-label="All Customer">
                 <option selected value="">{{trans('All Customer')}}</option>
                 @foreach($customers as $_customer)
                     <option value="{{$_customer?->id}}">{{$_customer?->name}} - {{$_customer?->phone}}</option>
@@ -35,19 +35,19 @@
                 <option value="date">Date Wise</option>
             </select>
             <span class="input-group-text" x-show="type==='day'">Day</span>
-            <select class="form-control" wire:model="day" x-show="type==='day'" aria-label="Day">
+            <select class="form-control" wire:model.live="day" x-show="type==='day'" aria-label="Day">
                 @foreach($days as $dayKey => $dayName)
                     <option value="{{$dayKey}}">{{$dayName}}</option>
                 @endforeach
             </select>
             <span class="input-group-text" x-show="type==='month'">Year</span>
-            <select class="form-control" wire:model="year" x-show="type==='month'" aria-label="Year">
+            <select class="form-control" wire:model.live="year" x-show="type==='month'" aria-label="Year">
                 @for($y=2022; $y <= today()->format('Y'); $y++)
                     <option value="{{$y}}">{{$y}}</option>
                 @endfor
             </select>
             <span class="input-group-text" x-show="type==='month'">Month</span>
-            <select class="form-control" wire:model="month" x-show="type==='month'" aria-label="Month">
+            <select class="form-control" wire:model.live="month" x-show="type==='month'" aria-label="Month">
                 @for($m=1; $m<=12; $m++)
                     <option value="{{date('n', mktime(0,0,0,$m, 1, date('Y')))}}">
                         {{date('F', mktime(0,0,0,$m, 1, date('Y')))}}
@@ -55,9 +55,9 @@
                 @endfor
             </select>
             <span class="input-group-text" x-show="type==='date'">From</span>
-            <input type="date" class="form-control" wire:model="start_date" x-show="type==='date'" aria-label="From"/>
+            <input type="date" class="form-control" wire:model.live="start_date" x-show="type==='date'" aria-label="From"/>
             <span class="input-group-text" x-show="type==='date'">To</span>
-            <input type="date" class="form-control" wire:model="end_date" x-show="type==='date'" aria-label="To"/>
+            <input type="date" class="form-control" wire:model.live="end_date" x-show="type==='date'" aria-label="To"/>
         </div>
     </div>
     <div class="mb-3 border text-center p-2">

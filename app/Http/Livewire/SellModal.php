@@ -143,7 +143,7 @@ class SellModal extends Component
 
         $this->date = today()->format('Y-m-d');
 
-        $this->emit( 'update-customer-index');
+        $this->dispatch( 'update-customer-index');
     }
 
     public function render(): Factory|View|Application
