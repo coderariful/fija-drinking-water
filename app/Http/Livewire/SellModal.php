@@ -5,8 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\Customer;
 use App\Models\Payments;
 use App\Models\Product;
-use App\Models\Purchase;
-use App\Models\Sale;
+use App\Models\Transaction;
 use App\Traits\SendSmsTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -90,14 +89,14 @@ class SellModal extends Component
             $this->date = date('Y-m-d');
         }
 
-        $sale = Sale::create([
+        $sale = Transaction::create([
             'customer_id'  => $this->customer->id,
             'user_id'      => auth()->user()->id,
             'product_type' => $this->product->type,
             'created_at' => $this->date,
         ] + $data);
 
-        flash("Sale added");
+        flash("Transaction added");
 
         if ($this->pay_amount>0) {
             $payment = Payments::create([
@@ -111,7 +110,7 @@ class SellModal extends Component
             flash("Payment saved");
         }
 
-        Purchase::create([
+        Transaction::create([
             'customer_id'  => $this->customer->id,
             'product_id'   => $this->product_id,
             'sale_id'      => $sale->id,

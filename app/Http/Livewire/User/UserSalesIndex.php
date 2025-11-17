@@ -4,7 +4,7 @@ namespace App\Http\Livewire\User;
 
 use App\Models\Customer;
 use App\Models\Product;
-use App\Models\Sale;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -72,7 +72,7 @@ class UserSalesIndex extends Component
     public function render(): Factory|View|Application
     {
         return view('livewire.user.user-sales-index', [
-            'sales' => Sale::query()
+            'sales' => Transaction::query()
                 ->with(['customer', 'product', 'user'])
                 ->where('product_type', PRODUCT_WATER)
                 ->where('user_id', auth()->id())

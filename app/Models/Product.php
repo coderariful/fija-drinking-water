@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     const DISPENSER = 'dispenser';
     const WATER = 'water';
@@ -38,7 +37,7 @@ class Product extends Model
 
     public function sales(): HasMany
     {
-        return $this->hasMany(Sale::class, 'user_id');
+        return $this->hasMany(Transaction::class, 'user_id');
     }
 
     public function __construct(array $attributes = [])

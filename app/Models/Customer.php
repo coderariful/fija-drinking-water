@@ -63,7 +63,7 @@ class Customer extends Model
 
     public function sales(): HasMany
     {
-        return $this->hasMany(Sale::class,'customer_id');
+        return $this->hasMany(Transaction::class,'customer_id');
     }
 
     public function dispenserUnique(): array

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Payments;
-use App\Models\Sale;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Traits\CustomerCardTrait;
 use App\Traits\CustomerListTrait;

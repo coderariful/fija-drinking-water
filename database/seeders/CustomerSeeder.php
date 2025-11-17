@@ -5,8 +5,7 @@ namespace Database\Seeders;
 use App\Models\Customer;
 use App\Models\Payments;
 use App\Models\Product;
-use App\Models\Purchase;
-use App\Models\Sale;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -28,7 +27,7 @@ class CustomerSeeder extends Seeder
         /* foreach ($customers as $customer) {
 //            $date =
 
-            $sale = Sale::create([
+            $sale = Transaction::create([
                 'customer_id'  => $customer->id,
                 'user_id'      => auth()->user()->id,
                 'product_type' => $product->type,

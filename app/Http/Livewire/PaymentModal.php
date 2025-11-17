@@ -5,8 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\Customer;
 use App\Models\Payments;
 use App\Models\Product;
-use App\Models\Purchase;
-use App\Models\Sale;
+use App\Models\Transaction;
 use App\Traits\SendSmsTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -55,7 +54,7 @@ class PaymentModal extends Component
 
         $payment = Payments::create($data);
 
-        Purchase::create([
+        Transaction::create([
             'customer_id'  => $this->customer->id,
             'payment_id'   => $payment->id ?? null,
         ]);

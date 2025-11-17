@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use App\Models\Customer;
 use App\Models\Payments;
-use App\Models\Sale;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
@@ -98,7 +98,7 @@ trait SalesHistoryTrait
         $groups = $histories?->groupBy('customer_id') ?? [];
         $previous = $this->getPreviousSalesHistories($dates, $user);
 
-        $total_sell = Sale::where('user_id', $user?->id)->sum('total_cost');
+        $total_sell = Transaction::where('user_id', $user?->id)->sum('total_cost');
         $total_paid = Payments::where('user_id', $user?->id)->sum('amount');
 
         return [
@@ -109,7 +109,7 @@ trait SalesHistoryTrait
             'jar_out_previous' => $previous->jar_out,
             'jar_in_count' => $histories?->sum('in_quantity'),
             'jar_out_count' => $histories?->sum('out_quantity'),
-            'sell_amount' => Sale::whereIn('id', $saleIds)->sum('total_cost'),
+            'sell_amount' => Transaction::whereIn('id', $saleIds)->sum('total_cost'),
             'collection_amount' => Payments::whereIn('id', $paymentIds)->sum('amount'),
             'customer'=> Customer::when(request('customer_id'), fn($q, $id) => $q->where('id', $id))->first(),
             'showCurrentFilter' => $this->showCurrentSalesFilter(),

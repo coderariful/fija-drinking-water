@@ -8,39 +8,45 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Payments extends Model
+class Transaction extends Model
 {
     protected $fillable = [
+        'type',
+        'product_id',
         'customer_id',
         'user_id',
-        'amount',
+        'quantity',
+        'in_quantity',
+        'out_quantity',
+        'rate',
+        'total_cost',
+        'product_type',
         'note',
         'created_at',
     ];
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function purchase(): HasOne
-    {
-        return $this->hasOne(Purchase::class, 'payment_id');
-    }
-
-
     public function getBalanceAttribute()
     {
-        return $this->where('customer_id', $this->customer_id)
+        $this->where('customer_id', $this->customer_id)
             ->where('id', '<=', $this->id)
             ->orderBy('id')
-            ->sum('amount');
+            ->sum('total_cost');
     }
-
 
     public function scopeToday(Builder $query)
     {

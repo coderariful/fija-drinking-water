@@ -3,8 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Customer;
-use App\Models\Purchase;
-use App\Models\Sale;
+use App\Models\Transaction;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -63,21 +62,11 @@ class PurchaseHistoryModal extends Component
         $this->customer = $customer;
     }
 
-    public function saveDateUpdate(Purchase $purchase): void
+    public function saveDateUpdate(Transaction $transaction): void
     {
         try {
-            $purchase->created_at = $this->date_created[$purchase->id];
-            $purchase->save();
-
-            if ($purchase->sale) {
-                $purchase->sale->created_at = $purchase->created_at;
-                $purchase->sale->save();
-            }
-
-            if ($purchase->payment) {
-                $purchase->payment->created_at = $purchase->created_at;
-                $purchase->payment->save();
-            }
+            $transaction->created_at = $this->date_created[$transaction->id];
+            $transaction->save();
 
             flash(trans('History date updated.'));
 
@@ -87,18 +76,15 @@ class PurchaseHistoryModal extends Component
         }
     }
 
-    public function saveIssueUpdate(Purchase $purchase): void
+    public function saveIssueUpdate(Transaction $transaction): void
     {
         try {
-            $purchase->in_quantity = $this->in_quantity[$purchase->id];
-            $purchase->save();
+            $transaction->in_quantity = $this->in_quantity[$transaction->id];
+            $transaction->save();
 
-            if ($purchase->sale) {
-                $sale = $purchase->sale;
-                $sale->quantity = $purchase->in_quantity;
-                $sale->total_cost = $purchase->in_quantity * $sale->rate;
-                $sale->save();
-            }
+            $transaction->quantity = $transaction->in_quantity;
+            $transaction->total_amount = $transaction->in_quantity * $transaction->rate;
+            $transaction->save();
 
             flash(trans('History issue entry updated.'));
 
@@ -108,11 +94,11 @@ class PurchaseHistoryModal extends Component
         }
     }
 
-    public function saveReturnUpdate(Purchase $purchase): void
+    public function saveReturnUpdate(Transaction $transaction): void
     {
         try {
-            $purchase->out_quantity = $this->out_quantity[$purchase->id];
-            $purchase->save();
+            $transaction->out_quantity = $this->out_quantity[$transaction->id];
+            $transaction->save();
 
             flash(trans('History return entry updated.'));
 
@@ -122,23 +108,24 @@ class PurchaseHistoryModal extends Component
         }
     }
 
-    public function savePaymentUpdate(Purchase $purchase): void
+    public function savePaymentUpdate(Transaction $transaction): void
     {
         try {
-            if ($purchase->payment) {
-                $payment = $purchase->payment;
-                $payment->amount = $this->payment[$purchase->id];
-                $payment->save();
+            $payment = $transaction->payment;
+            $payment->amount = $this->payment[$transaction->id];
+            $payment->save();
+
+            if ($transaction->payment) {
             } else {
-                $payment = $purchase->payment()->create([
-                    'amount' => $this->payment[$purchase->id],
-                    'created_at' => $purchase->created_at,
-                    'customer_id' => $purchase->customer_id,
-                    'user_id' => $purchase->customer->user_id,
-                    'note' => $purchase->note,
+                $payment = $transaction->payment()->create([
+                    'amount' => $this->payment[$transaction->id],
+                    'created_at' => $transaction->created_at,
+                    'customer_id' => $transaction->customer_id,
+                    'user_id' => $transaction->customer->user_id,
+                    'note' => $transaction->note,
                 ]);
 
-                $purchase->update(['payment_id' => $payment->id]);
+                $transaction->update(['payment_id' => $payment->id]);
             }
 
             flash(trans('History payment entry updated.'));
@@ -170,8 +157,7 @@ class PurchaseHistoryModal extends Component
 
     private function getHistories(): Collection|array|null
     {
-        return $this->customer?->purchase()
-            ->with(['sale', 'payment'])
+        return $this->customer?->sales()
             ->orderBy('created_at')
             ->where('product_type', PRODUCT_WATER)
             ->when($this->month, fn(Builder $query, $month) => $query->where(DB::raw('MONTH(created_at)'), $month))
@@ -196,11 +182,11 @@ class PurchaseHistoryModal extends Component
         $previous_sales = $this->customer?->sales()
             ->where('product_type', PRODUCT_WATER)
             ->whereDate('created_at', '<', $date)
-            ->sum('total_cost');
+            ->sum('total_amount');
 
-        $previous_payments = $this->customer?->payments()
+        $previous_payments = $this->customer?->sales()
             ->whereDate('created_at', '<', $date)
-            ->sum('amount');
+            ->sum('paid_amount');
 
         return round($previous_sales - $previous_payments);
     }

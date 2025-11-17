@@ -6,8 +6,7 @@ use App\Helpers\SMS;
 use App\Models\Customer;
 use App\Models\CustomerHistory;
 use App\Models\Product;
-use App\Models\Purchase;
-use App\Models\Sale;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 trait CustomerTrait
@@ -33,7 +32,7 @@ trait CustomerTrait
         $product = Product::firstWhere('type', Product::WATER);
 
         if ($request->has('due_amount') && $request->get('due_amount') > 0) {
-            $sale = Sale::create([
+            $sale = Transaction::create([
                 'product_id' => $product->id,
                 'customer_id' => $customer->id,
                 'user_id' => $customer->user_id,
@@ -46,7 +45,7 @@ trait CustomerTrait
         }
 
         if ($request->has('jar_stock') && $request->get('jar_stock') > 0) {
-            Purchase::create([
+            Transaction::create([
                 'customer_id' => $customer->id,
                 'product_id' => $product->id,
                 'sale_id' => $sale->id ?? null,
@@ -62,7 +61,7 @@ trait CustomerTrait
         if ($request->has('dispenser') && $request->get('dispenser') != '') {
             $dispenser = Product::where('type', Product::DISPENSER)->find($request->get('dispenser'));
             if($dispenser) {
-                $sale = Sale::create([
+                $sale = Transaction::create([
                     'product_id' => $dispenser->id,
                     'customer_id' => $customer->id,
                     'user_id' => $customer->user_id,
@@ -72,7 +71,7 @@ trait CustomerTrait
                     'product_type' => Product::DISPENSER,
                     'created_at' => $customer->issue_date,
                 ]);
-                Purchase::create([
+                Transaction::create([
                     'customer_id' => $customer->id,
                     'product_id' => $dispenser->id,
                     'sale_id' => $sale->id ?? null,

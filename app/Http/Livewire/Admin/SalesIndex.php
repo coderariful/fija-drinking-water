@@ -4,7 +4,7 @@ namespace App\Http\Livewire\Admin;
 
 use App\Models\Customer;
 use App\Models\Product;
-use App\Models\Sale;
+use App\Models\Transaction;
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -79,7 +79,7 @@ class SalesIndex extends Component
         $this->only_date = null;
     }
 
-    public function deleteSale(Sale $sale)
+    public function deleteSale(Transaction $sale)
     {
         try {
             $sale->purchase?->payment?->delete();
@@ -92,7 +92,7 @@ class SalesIndex extends Component
         }
     }
 
-    public function saveQtyUpdate(Sale $sale)
+    public function saveQtyUpdate(Transaction $sale)
     {
         try {
             $sale->quantity = $this->quantity[$sale->id];
@@ -111,7 +111,7 @@ class SalesIndex extends Component
         }
     }
 
-    public function saveDateUpdate(Sale $sale)
+    public function saveDateUpdate(Transaction $sale)
     {
         try {
             $sale->created_at = $this->date_created[$sale->id];
@@ -137,7 +137,7 @@ class SalesIndex extends Component
 
     public function render(): Factory|View|Application
     {
-        $sales = Sale::query()
+        $sales = Transaction::query()
             ->with(['customer', 'product', 'user'])
             ->where('product_type', PRODUCT_WATER)
             ->when($this->employee_id, fn($query, $employee_id) => $query->where('user_id', $employee_id))
