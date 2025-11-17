@@ -39,3 +39,6 @@ return new class extends Migration
         Schema::dropIfExists('customers');
     }
 };
+
+
+// DELETE FROM customers WHERE deleted_at IS NOT NULL;
