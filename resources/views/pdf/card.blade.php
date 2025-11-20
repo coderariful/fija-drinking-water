@@ -21,7 +21,6 @@
             margin: 10pt 30pt 10pt 0;
         }
         body {
-            margin: 20pt;
             @if(request('view')=='on')
             width: 8.27in;
             margin: 20pt auto;
@@ -32,6 +31,11 @@
             border: 1px solid #1b1b1b !important;
             padding-top: 2px !important;
             padding-bottom: 2px !important;
+        }
+        @media print {
+            table, .table, .table-bordered, .table th, .table td {
+                background: transparent !important;
+            }
         }
     </style>
 </head>

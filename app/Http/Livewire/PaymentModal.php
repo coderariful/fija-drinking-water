@@ -3,7 +3,6 @@
 namespace App\Http\Livewire;
 
 use App\Models\Customer;
-use App\Models\Payments;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Traits\SendSmsTrait;
@@ -52,7 +51,7 @@ class PaymentModal extends Component
             $data['created_at'] = date('Y-m-d');
         }
 
-        $payment = Payments::create($data);
+        $payment = Transaction::create($data);
 
         Transaction::create([
             'customer_id'  => $this->customer->id,

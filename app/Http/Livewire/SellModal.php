@@ -3,7 +3,6 @@
 namespace App\Http\Livewire;
 
 use App\Models\Customer;
-use App\Models\Payments;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Traits\SendSmsTrait;
@@ -91,36 +90,18 @@ class SellModal extends Component
 
         $sale = Transaction::create([
             'customer_id'  => $this->customer->id,
+            'product_id'  => $this->product->id,
             'user_id'      => auth()->user()->id,
             'product_type' => $this->product->type,
+            'in_quantity'  => $this->quantity,
+            'out_quantity' => $this->out_quantity,
+            'total_amount' => $this->total_cost,
+            'paid_amount' => $this->pay_amount,
+            'rate'         => $this->rate,
             'created_at' => $this->date,
         ] + $data);
 
         flash("Transaction added");
-
-        if ($this->pay_amount>0) {
-            $payment = Payments::create([
-                'customer_id' => $this->customer->id,
-                'user_id'     => auth()->user()->id,
-                'amount'      => $this->pay_amount,
-                'note'        => $this->note,
-                'created_at' => $this->date,
-            ]);
-
-            flash("Payment saved");
-        }
-
-        Transaction::create([
-            'customer_id'  => $this->customer->id,
-            'product_id'   => $this->product_id,
-            'sale_id'      => $sale->id,
-            'payment_id'   => $payment->id ?? null,
-            'product_type' => $this->product->type,
-            'in_quantity'  => $this->quantity,
-            'out_quantity' => $this->out_quantity,
-            'rate'         => $this->rate,
-            'created_at' => $this->date,
-        ]);
 
         $data = [
             '{sale_count}'  => intval($this->quantity),

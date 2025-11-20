@@ -94,7 +94,7 @@ class UserSalesIndex extends Component
                 ->when($this->end_date, function (Builder $builder, $end_date) {
                     $builder->whereDate('created_at', '<=', $end_date);
                 })
-                ->paginate(20),
+                ->paginate(50),
             'employees' => User::all(),
             'customers' => Customer::when($this->employee_id, fn($query, $employee_id) => $query->where('user_id', $employee_id))->get(),
             'products' => Product::all(),

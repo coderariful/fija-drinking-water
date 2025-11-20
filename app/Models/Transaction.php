@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 class Transaction extends Model
 {
@@ -19,7 +20,8 @@ class Transaction extends Model
         'in_quantity',
         'out_quantity',
         'rate',
-        'total_cost',
+        'total_amount',
+        'paid_amount',
         'product_type',
         'note',
         'created_at',
@@ -40,16 +42,42 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function jarStockQuery(): Builder|Transaction
+    {
+        return $this->where('customer_id', $this->customer_id)
+            ->where('product_type', Product::WATER)
+            ->when($this->id, fn($q) => $q->where('id', '<=', $this->id))
+            ->orderBy('created_at')
+            ->orderBy('id');
+    }
+
+    public function getJarStockAttribute(): int
+    {
+        if (property_exists($this, 'jar_stock') && !is_null($this->jar_stock)) {
+            return $this->jar_stock;
+        }
+
+        $query = $this->jarStockQuery();
+        $stock = $query->selectRaw('SUM(in_quantity) as in_qty, SUM(out_quantity) as out_qty')->first();
+
+        return intval($stock->in_qty) - intval($stock->out_qty);
+    }
+
     public function getBalanceAttribute()
     {
-        $this->where('customer_id', $this->customer_id)
+        return $this->where('customer_id', $this->customer_id)
             ->where('id', '<=', $this->id)
             ->orderBy('id')
-            ->sum('total_cost');
+            ->sum('total_amount');
     }
 
     public function scopeToday(Builder $query)
     {
         $query->whereDate('created_at', today());
+    }
+
+    public function scopeThisMonth(Builder $query)
+    {
+        $query->where(DB::raw('MONTH(created_at)'), today()->month);
     }
 }

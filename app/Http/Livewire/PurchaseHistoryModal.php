@@ -17,7 +17,7 @@ class PurchaseHistoryModal extends Component
     public ?Customer $customer = null;
 
     protected $listeners = [
-        'open-modal' => 'loadData'
+        'open-modal' => 'openModal'
     ];
     public $filterType='month';
     public $month;
@@ -55,6 +55,14 @@ class PurchaseHistoryModal extends Component
             }
         }
 
+    }
+
+    public function openModal(Customer $customer): void
+    {
+        $this->loadData($customer);
+        $this->month = date('n');
+        $this->year = date('Y');
+        $this->filterType = 'month';
     }
 
     public function loadData(Customer $customer): void
@@ -157,13 +165,19 @@ class PurchaseHistoryModal extends Component
 
     private function getHistories(): Collection|array|null
     {
-        return $this->customer?->sales()
+        if (!$this->customer) {
+            return [];
+        }
+
+        return $this->customer->sales()
             ->orderBy('created_at')
-            ->where('product_type', PRODUCT_WATER)
             ->when($this->month, fn(Builder $query, $month) => $query->where(DB::raw('MONTH(created_at)'), $month))
             ->when($this->year, fn(Builder $query, $year) => $query->where(DB::raw('YEAR(created_at)'), $year))
             ->when($this->start_date, fn(Builder $query, $start_date) => $query->where(DB::raw('DATE(created_at)'), '>=', $start_date))
             ->when($this->end_date, fn(Builder $query, $end_date) => $query->where(DB::raw('DATE(created_at)'), '<=',$end_date))
+            ->addSelect([
+                'stock_qty' => $this->addSelectStockSubquery(PRODUCT_WATER),
+            ])
             ->get();
     }
 
@@ -189,5 +203,29 @@ class PurchaseHistoryModal extends Component
             ->sum('paid_amount');
 
         return round($previous_sales - $previous_payments);
+    }
+
+    public function placeholder(): string
+    {
+        return <<<'HTML'
+            <div class="animate-pulse space-y-4">
+                <div class="h-6 bg-gray-300 rounded w-1/4"></div>
+                <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+                <div class="h-4 bg-gray-300 rounded w-2/4"></div>
+                <div class="h-4 bg-gray-300 rounded w-5/6"></div>
+            </div>
+        HTML;
+    }
+
+    private function addSelectStockSubquery(string $PRODUCT_WATER): Builder|Transaction
+    {
+        return Transaction::from('transactions as t2')
+            ->selectRaw('IFNULL(SUM(t2.in_quantity),0)-IFNULL(SUM(t2.out_quantity),0) AS jar_stock')
+            ->whereColumn('t2.customer_id', 'transactions.customer_id')
+            ->where('t2.product_type', $PRODUCT_WATER)
+            ->whereColumn('t2.created_at', '<=', 'transactions.created_at')
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->limit(1);
     }
 }

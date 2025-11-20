@@ -3,40 +3,47 @@
         <div class="card card-dark bg-dark">
             <div class="card-header d-block">
                 <form action="{{route('print.customer-list')}}" @submit.prevent="const urlParams=new URLSearchParams(new FormData($el)).toString();window.open(`${$el.action}?${urlParams}`,'_blank')">
-                <div class="row">
-                    <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
-                        <h6 class="card-title">{{$title}}</h6>
-                        <button type="button" class="btn btn-danger" onclick="return confirm('{{trans('Are you sure?')}}') || event.stopImmediatePropagation()" wire:click.prevent="sendToAll">{{trans('Send SMS to All')}}</button>
-                        <input type="hidden" name="showDue" wire:model.live="showDue">
-                        @if($showDue)
-                        <button type="button" class="btn btn-primary" wire:click.prevent="filterDue(false)">{{trans('Show All')}}</button>
-                        @else
-                        <button type="button" class="btn btn-primary" wire:click.prevent="filterDue(true)">{{trans('Show Due')}}</button>
-                        @endif
-                        <select class="form-control w-25" wire:model.live="employee_id" name="employee_id">
-                            <option value="">All</option>
-                            @foreach($employees as $employee)
-                                <option value="{{$employee->id}}">{{$employee->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="input-group row">
-                            <input type="date" class="form-control w-25" wire:model.live="start_date" name="start_date">
-                            <input type="date" class="form-control w-25" wire:model.live="end_date" name="end_date">
-                            <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.live.debounce="keyword" name="keyword">
-                            <button class="ml-1 btn btn-success">Print</button>
+                    <input type="hidden" name="view" value="on">
+                    <input type="hidden" name="showDue" value="{{$showDue ? 'true' : 'false'}}">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
+                            <h6 class="card-title">{{$title}}</h6>
+                            <button type="button" class="btn btn-danger" onclick="return confirm('{{trans('Are you sure?')}}') || event.stopImmediatePropagation()" wire:click.prevent="sendToAll">{{trans('Send SMS to All')}}</button>
+                            @if($showDue)
+                            <button type="button" class="btn btn-primary" wire:click="filterDue(false)">{{trans('Show All')}}</button>
+                            @else
+                            <button type="button" class="btn btn-primary" wire:click="filterDue(true)">{{trans('Show Due')}}</button>
+                            @endif
+                            <select class="form-control w-25" wire:model.live="employee_id" name="employee_id">
+                                <option value="">All</option>
+                                @foreach($employees as $employee)
+                                    <option value="{{$employee->id}}">{{$employee->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="input-group row">
+                                <input type="date" class="form-control w-25" wire:model.live="start_date" name="start_date">
+                                <input type="date" class="form-control w-25" wire:model.live="end_date" name="end_date">
+                                <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.live.debounce="keyword" name="keyword">
+                                <button class="ml-1 btn btn-success">Print</button>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </form>
             </div>
-            <div class="card-body">
+            <div class="card-body position-relative">
+                <div class="position-absolute w-100 h-100 pt-5" wire:loading
+                     style="z-index: 99999; top: 0; left: 0; background: rgba(0, 0, 0, .5); backdrop-filter: blur(2px)">
+                    <div class="py-4 text-center bg-light-blue my-5">
+                        <h3 class="text-white mb-0">Processing</h3>
+                    </div>
+                </div>
                 <div class="table-responsive style-scroll">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered table-compact">
                         <thead>
                         <tr>
-                            <th class="align-middle text-center" rowspan="2" scope="col">{{__('S/N')}}</th>
+                            <th class="align-middle text-center" rowspan="2" scope="col" nowrap>{{__('S/N')}}</th>
                             <th class="align-middle" rowspan="2" scope="col"></th>
                             <th class="align-middle" rowspan="2" scope="col">{{ __('Employee') }}</th>
                             <th class="align-middle" rowspan="2" scope="col">{{ __('Customer') }}</th>
@@ -53,22 +60,23 @@
                         </thead>
                         <tbody>
                         @forelse($customers as $customer)
-{{--                            @dd($customer)--}}
                             <tr>
                                 <th class="text-center">{{ paginationIndex($customers, $loop->iteration) }}</th>
                                 <td nowrap>
-                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$dispatchTo('sell-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
+                                    <button type="button"  class="btn btn-sm btn-warning" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$dispatchTo('sell-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">shopping_basket</i>
                                     </button>
+                                    {{--
                                     <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Payment" data-toggle="modal" data-target="#paymentModal" wire:click="$dispatchTo('payment-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">account_balance_wallet</i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-info btn-circle" title="Purchase History" data-toggle="modal" data-target="#historyModal" wire:click="$dispatchTo('purchase-history-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
+                                    --}}
+                                    <button type="button" class="btn btn-sm btn-info" title="Purchase History" data-toggle="modal" data-target="#historyModal" wire:click="$dispatchTo('purchase-history-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">assignment</i>
                                     </button>
                                 </td>
                                 <td>{{ $customer->user?->name??'-'}}</td>
-                                <td>
+                                <td class="py-4px">
                                     <strong>{{trans('Name')}}:</strong> {{ $customer->name??''}} <br>
                                     <strong>{{trans('Phone')}}:</strong> {{ $customer->phone??'' }} <br>
                                     <strong>{{trans('Address')}}:</strong> <span title="{{$customer->address}}">{{ str($customer->address??'')->limit(20) }}</span>
@@ -77,7 +85,7 @@
                                 <td class="text-center">{{ $customer->jar_stock }}</td>
                                 <td class="text-center">{{ $customer->due_amount }}</td>
                                 <td class="text-center">{{ formatDate($customer->issue_date, DATE_FORMAT) }} <br> {{ str($customer->billing_type??'')->upper() }}</td>
-                                <td class="text-center">
+                                <td class="text-center py-0">
                                     @if($customer->status == CUSTOMER_PENDING)
                                         <select class="bg-warning px-2 py-1 text-center rounded border-0 w-100" @change="$wire.update_status({{$customer->id}}, $el.value)">
                                             <option class="text-center text-white bg-warning" value="{{CUSTOMER_PENDING}}">PENDING</option>
@@ -90,14 +98,14 @@
                                         <div class="bg-danger px-2 py-1 text-center rounded">REJECTED</div>
                                     @endif
                                 </td>
-                                <td nowrap>
-                                    <button type="button" class="btn btn-sm btn-info btn-circle" title="Send SMS" data-toggle="modal" data-target="#smsModal" wire:click="$dispatchTo('admin.sms-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
+                                <td nowrap class="py-2px">
+                                    <button type="button" class="btn btn-sm btn-info" title="Send SMS" data-toggle="modal" data-target="#smsModal" wire:click="$dispatchTo('admin.sms-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">send</i>
                                     </button>
-                                    <a href="{{route('admin.customer.edit',$customer->id)}}" class="btn btn-sm btn-success btn-circle" title="Edit" data-bs-toggle="tooltip" data-placement="top">
+                                    <a href="{{route('admin.customer.edit',$customer->id)}}" class="btn btn-sm btn-success" title="Edit" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">edit</i>
                                     </a>
-                                    <button type="submit" class="btn btn-sm btn-danger btn-circle" form="delete-{{$customer->id}}" title="Delete" onclick="return confirm('Are you sure, would you like to delete tha user?');" data-bs-toggle="tooltip" data-placement="top">
+                                    <button type="submit" class="btn btn-sm btn-danger" form="delete-{{$customer->id}}" title="Delete" onclick="return confirm('Are you sure, would you like to delete tha user?');" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">delete</i>
                                     </button>
                                     <form action="{{route('admin.customer.destroy',$customer->id)}}" method="POST" id="delete-{{$customer->id}}"> @csrf @method('DELETE') </form>
@@ -192,12 +200,12 @@
     </div>
 </div>
 
-@push('scripts')
-    <script>
-        $(function() {
-            $(document).on('sms-sent', function() {
-                $("#sms_message").val("");
-            });
+@script
+<script>
+    $(function() {
+        $(document).on('sms-sent', function() {
+            $("#sms_message").val("");
         });
-    </script>
-@endpush
+    });
+</script>
+@endscript

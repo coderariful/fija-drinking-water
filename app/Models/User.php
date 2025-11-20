@@ -51,19 +51,9 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class, 'user_id');
     }
 
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payments::class, 'user_id');
-    }
-
     public function customer(): HasMany
     {
         return $this->hasMany(Customer::class, 'user_id');
-    }
-
-    public function purchases(): HasManyThrough
-    {
-        return $this->hasManyThrough(Transaction::class, Customer::class);
     }
 
     public function isAdmin(): bool

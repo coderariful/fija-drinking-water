@@ -64,13 +64,13 @@
                         <thead>
                         <tr>
                             <th scope="col" class="text-center">{{__('SN')}}</th>
-                            <th scope="col">{{ __('Date') }}</th>
+                            <th scope="col" nowrap>{{ __('Date') }}</th>
                             <th scope="col">{{ __('Employee') }}</th>
                             <th scope="col">{{ __('Customer') }}</th>
                             <th scope="col">{{ __('Phone') }}</th>
                             <th scope="col">{{ __('Product') }}</th>
                             <th scope="col" class="text-center">{{ __('Rate') }}</th>
-                            <th scope="col" class="text-center">{{ __('Qty.') }}</th>
+                            <th scope="col" class="text-center" nowrap>{{ __('Qty.') }}</th>
                             <th scope="col" class="text-center">{{ __('Total Amount') }}</th>
                             <th scope="col">{{ __('Note') }}</th>
                         </tr>
@@ -85,8 +85,8 @@
                                 <td class="py-1">{{ $sale->customer?->phone??'-' }}</td>
                                 <td class="py-1">{{ $sale->product?->name??'-' }} {{ $sale->product?->sku ? "({$sale->product->sku})" : "" }}</td>
                                 <td class="py-1 text-center">{{ $sale->rate }}</td>
-                                <td class="py-1 text-center">{{ $sale->quantity }}</td>
-                                <td class="py-1 text-center">{{ $sale->total_cost }}</td>
+                                <td class="py-1 text-center" nowrap>{{ $sale->quantity }}</td>
+                                <td class="py-1 text-center">{{ $sale->total_amount }}</td>
                                 <td class="py-1">{{ str($sale->note??'-')->limit() }}</td>
                             </tr>
                         @empty

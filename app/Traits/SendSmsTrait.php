@@ -18,7 +18,7 @@ trait SendSmsTrait
         if ($customer->send_sms) {
             $template = SmsTemplate::firstWhere('template', $templateName);
             $message = SMS::parseTemplate($template->body, $data);
-            SMS::saveInHistory($customer->id, $customer->phone, $message, $templateName);
+            $history = SMS::saveInHistory($customer->id, $customer->phone, $message, $templateName);
             $sms = new SMS($message);
             $sms->send($customer->phone, true);
         }

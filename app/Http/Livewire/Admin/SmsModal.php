@@ -25,7 +25,7 @@ class SmsModal extends Component
         'open-modal' => 'loadData'
     ];
 
-    public function send(string $templateName = null)
+    public function send(string $templateName = null): void
     {
         if (in_array($templateName, ['customer-monthly-sms', 'customer-daily-sms'])){
             $template = SmsTemplate::firstWhere('template', $templateName);
@@ -43,13 +43,17 @@ class SmsModal extends Component
             $sms = new SMS($this->message);
             $response = $sms->send($this->customer->phone, true);
 
-            if ($response->status) {
+            if ($response && $response->status) {
                 $this->alert = ['type' => 'success', 'message' => 'Message sent'];
                 flash("Message sent successfully.");
 
                 $this->reset(['message']);
                 $this->dispatch('sms-sent');
+
+                return;
             }
+
+            flash("Message sent failed.");
         }
     }
 

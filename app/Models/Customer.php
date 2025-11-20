@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class Customer extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     const PENDING = 0;
     const APPROVED = 1;
@@ -46,19 +46,14 @@ class Customer extends Model
         'issue_date' => 'date'
     ];
 
+    public function getStatusLabelAttribute(): string
+    {
+        return self::STATUS[$this->status] ?? 'Unknown';
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class,'user_id','id');
-    }
-
-    public function purchase(): HasMany
-    {
-        return $this->hasMany(Purchase::class,'customer_id');
-    }
-
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payments::class,'customer_id');
     }
 
     public function sales(): HasMany
@@ -68,13 +63,13 @@ class Customer extends Model
 
     public function dispenserUnique(): array
     {
-        $productIds = $this->purchase()->where('product_type', Product::DISPENSER)->pluck('product_id');
+        $productIds = $this->sales()->where('product_type', Product::DISPENSER)->pluck('product_id');
         return Product::whereIn('id', $productIds)->pluck('name')->unique()->all();
     }
 
     public function dispenserAll()
     {
-        $productIds = $this->purchase()->where('product_type', Product::DISPENSER)->pluck('product_id');
+        $productIds = $this->sales()->where('product_type', Product::DISPENSER)->pluck('product_id');
         $products = Product::whereIn('id', $productIds->unique())->pluck('name', 'id');
         $counts = [];
         $items = [];
@@ -88,31 +83,61 @@ class Customer extends Model
     public function getJarStockAttribute()
     {
         $attributes = $this->getAttributes();
-        if (array_key_exists('purchase_sum_in_quantity', $attributes) && array_key_exists('purchase_sum_out_quantity', $attributes)) {
-            $totalIn = (float)$attributes['purchase_sum_in_quantity'];
-            $totalOut = (float)$attributes['purchase_sum_out_quantity'];
 
-            return $totalIn-$totalOut;
+        if (array_key_exists('jar_stock', $attributes)) {
+            return (float)$attributes['jar_stock'];
         }
 
-        return $this->purchase()->whereProductType(Product::WATER)->select(DB::raw('IFNULL((SUM(in_quantity)-SUM(out_quantity)), 0)quantity'))->first()->quantity;
+        if (array_key_exists('sales_sum_in_quantity', $attributes) && array_key_exists('sales_sum_out_quantity', $attributes)) {
+            $totalIn = (float)$attributes['sales_sum_in_quantity'];
+            $totalOut = (float)$attributes['sales_sum_out_quantity'];
+
+            return $totalIn - $totalOut;
+        }
+
+        return $this->sales()->whereProductType(Product::WATER)
+            ->select(DB::raw('IFNULL((SUM(in_quantity)-SUM(out_quantity)), 0) jar_stock'))
+            ->first()->jar_stock;
     }
 
     public function getDueAmountAttribute(): float
     {
         $attributes = $this->getAttributes();
-        if (array_key_exists('payments_sum_amount', $attributes) && array_key_exists('sales_sum_total_cost', $attributes)) {
-            $totalSales = (float)$attributes['sales_sum_total_cost'];
-            $totalPayments = (float)$attributes['payments_sum_amount'];
+
+        if (array_key_exists('due_amount', $attributes)) {
+            return (float)$attributes['due_amount'];
+        }
+
+        if (array_key_exists('sales_sum_paid_amount', $attributes) && array_key_exists('sales_sum_total_amount', $attributes)) {
+            $totalSales = (float)$attributes['sales_sum_total_amount'];
+            $totalPayments = (float)$attributes['sales_sum_paid_amount'];
 
             return $totalSales-$totalPayments;
         }
 
-        return $this->sales()->selectRaw("IFNULL(IFNULL(SUM(total_cost), 0)-IFNULL((select sum(amount) as amount from payments where payments.customer_id=sales.customer_id), 0), 0) as amount")->first()->amount;
+        return $this->sales()
+            ->selectRaw("IFNULL(IFNULL(SUM(total_amount), 0)-IFNULL(SUM(paid_amount), 0), 0) as due_amount")
+            ->first()->due_amount;
     }
 
     public function scopeToday(Builder $query)
     {
         $query->whereDate('created_at', today());
+    }
+
+    public function scopeWithTransactions(Builder|Customer $query): void
+    {
+        $query
+            ->leftJoin('transactions as t', 'customers.id', '=', 't.customer_id')
+            ->select([
+                DB::raw('customers.*'),
+                DB::raw('IFNULL(SUM(t.total_amount),0) as total_sales'),
+                DB::raw('IFNULL(SUM(t.paid_amount),0) as total_paid'),
+                DB::raw('IFNULL(SUM(t.in_quantity),0) as total_in_qty'),
+                DB::raw('IFNULL(SUM(t.out_quantity),0) as total_out_qty'),
+                DB::raw('IFNULL(SUM(t.total_amount), 0) - IFNULL(SUM(t.paid_amount), 0) as due_amount'),
+                DB::raw('IFNULL(SUM(t.in_quantity), 0) - IFNULL(SUM(t.out_quantity), 0) as jar_stock'),
+            ])
+            ->groupBy('customers.id');
     }
 }

@@ -14,26 +14,26 @@
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <div class="row">
+                    <div class="row mb-2">
                         <div class="col-md-3">
-                            <select class="form-control" wire:model.blur="employee_id">
-                                <option value="">Select Employee</option>
+                            <select class="form-control border-0" wire:model.blur="employee_id">
+                                <option value="">All Employee</option>
                                 @foreach($employees as $employee)
                                     <option value="{{$employee->id}}">{{$employee->name}}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control" wire:model.blur="customer_id">
-                                <option value="">Select Customer</option>
+                            <select class="form-control border-0" wire:model.live="customer_id">
+                                <option value="">All Customer</option>
                                 @foreach($customers as $customer)
                                     <option value="{{$customer->id}}">{{$customer->name}}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control" wire:model.blur="product_id">
-                                <option value="">Select Product</option>
+                            <select class="form-control border-0" wire:model.live="product_id">
+                                <option value="">All Product</option>
                                 @foreach($products as $product)
                                     <option value="{{$product->id}}">{{$product->name}}</option>
                                 @endforeach
@@ -42,33 +42,33 @@
                     </div>
                     <div class="row" x-data="{type: 'day'}">
                         <div class="col-md-3">
-                            <select class="form-control" x-model="type">
+                            <select class="form-control border-0" x-model="type">
                                 <option value="day">Single Day</option>
                                 <option value="range">Date Range</option>
                             </select>
                         </div>
                         <div class="col-md-3" x-show="type=='day'">
                             <div class="input-group">
-                                <span class="input-group-text bg-white text-dark">Date</span>
-                                <input type="date" class="form-control" wire:model.live="only_date">
+                                <span class="input-group-text bg-white text-dark border-right">Date</span>
+                                <input type="date" class="form-control border-0" wire:model.live="only_date">
                             </div>
                         </div>
                         <div class="col-md-3" x-show="type=='range'">
                             <div class="input-group">
-                                <span class="input-group-text bg-white text-dark">From</span>
-                                <input type="date" class="form-control" wire:model.live="start_date">
+                                <span class="input-group-text bg-white text-dark border-right">From</span>
+                                <input type="date" class="form-control border-0" wire:model.live="start_date">
                             </div>
                         </div>
                         <div class="col-md-3" x-show="type=='range'">
                             <div class="input-group">
-                                <span class="input-group-text bg-white text-dark">To</span>
-                                <input type="date" class="form-control" wire:model.live="end_date">
+                                <span class="input-group-text bg-white text-dark border-right">To</span>
+                                <input type="date" class="form-control border-0" wire:model.live="end_date">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="table-responsive style-scroll">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered table-compact">
                         <thead>
                         <tr>
                             <th scope="col" class="text-center">{{__('SN')}}</th>
@@ -76,7 +76,7 @@
                             <th scope="col">{{ __('Employee') }}</th>
                             <th scope="col">{{ __('Customer') }}</th>
                             <th scope="col">{{ __('Phone') }}</th>
-                            <th scope="col" class="text-center">{{ __('Pay Amount') }}</th>
+                            <th scope="col" class="text-center">{{ __('Paid Amount') }}</th>
                             <th scope="col">{{ __('Note') }}</th>
                             <th></th>
                         </tr>
@@ -87,7 +87,7 @@
                                 <th class="py-0 text-center">{{ paginationIndex($sales, $loop->iteration) }}</th>
                                 <td class="py-1" x-data="{edit: false}">
 
-                                    <span x-show="!edit">
+                                    <span x-bind:class="edit?'d-none':'d-flex'" class="justify-content-between">
                                         {{ $sale->created_at?->format('d-M-Y') }}
                                         <a href="javascript:void(0)" @click="edit=true" >
                                             <i class="fa fa-pencil text-secondary ml-2" wire:loading.attr="hidden" wire:target="saveDateUpdate({{$sale->id}})"></i>
@@ -95,13 +95,13 @@
                                         </a>
                                     </span>
 
-                                    <span class="form-group my-1" x-bind:class="{'d-flex': edit}" x-show="edit" x-on:entryUpdated="edit=false">
-                                        <input type="date" class="border-0 form-control-sm" style="width:100px;font-size:14px;" value="{{$sale->created_at?->format('Y-m-d')}}" wire:model="date_created.{{$sale->id}}">
-                                        <button wire:click="saveDateUpdate({{$sale->id}})" x-on:click.debounce="edit=false" class="border-0 text-white bg-success">
+                                    <span class="form-group my-0 w-100" x-bind:class="{'d-flex': edit}" x-show="edit" x-on:entryUpdated="edit=false">
+                                        <input type="date" class="border-0 form-control-sm py-0" style="min-width:120px;font-size:12px;" value="{{$sale->created_at?->format('Y-m-d')}}" wire:model="date_created.{{$sale->id}}">
+                                        <button wire:click="saveDateUpdate({{$sale->id}})" x-on:click.debounce="edit=false" class="border-0 text-white bg-success px-2">
                                             <i class="fa fa-check" wire:loading.attr="hidden" wire:target="saveDateUpdate({{$sale->id}})"></i>
                                             <span class="fa fa-spinner fa-spin" wire:loading wire:target="saveDateUpdate({{$sale->id}})"></span>
                                         </button>
-                                        <button x-on:click="edit=false" class="border-0 text-white bg-danger"><i class="fa fa-times"></i></button>
+                                        <button x-on:click="edit=false" class="border-0 text-white bg-danger px-2"><i class="fa fa-times"></i></button>
                                     </span>
 
                                 </td>
@@ -110,7 +110,7 @@
                                 <td class="py-0">{{ $sale->customer?->phone??'-' }}</td>
                                 <td class="py-0 text-center" x-data="{edit: false}">
                                     <span x-show="!edit">
-                                        {{ $sale->amount }}
+                                        {{ round($sale->paid_amount, 2) }}
                                         <a href="javascript:void(0)" @click="edit=true" >
                                             <i class="fa fa-pencil text-secondary ml-2" wire:loading.attr="hidden" wire:target="saveAmountUpdate({{$sale->id}})"></i>
                                             <span class="fa fa-spinner fa-spin" wire:loading wire:target="saveAmountUpdate({{$sale->id}})"></span>
@@ -118,17 +118,18 @@
                                     </span>
 
                                     <span class="form-group my-1 justify-content-center" x-bind:class="{'d-flex': edit}" x-show="edit" x-on:entryUpdated="edit=false">
-                                        <input type="number" min="1" class="border-0 form-control-sm text-center" style="width:70px;font-size:14px;" value="{{$sale->amount}}" wire:model="amounts.{{$sale->id}}">
-                                        <button wire:click="saveAmountUpdate({{$sale->id}})" x-on:click.debounce="edit=false" class="border-0 text-white bg-success">
+                                        <input type="number" min="1" class="border-0 form-control-sm number-input" style="width:70px;font-size:14px;" value="{{$sale->paid_amount}}" wire:model="paid_amount.{{$sale->id}}" oninput="return this.value = this.value.replace(/[^0-9]/g, '');">
+                                        <button wire:click="saveAmountUpdate({{$sale->id}})" x-on:click.debounce="edit=false" class="border-0 text-white bg-success px-2">
                                             <i class="fa fa-check" wire:loading.attr="hidden" wire:target="saveAmountUpdate({{$sale->id}})"></i>
                                             <span class="fa fa-spinner fa-spin" wire:loading wire:target="saveAmountUpdate({{$sale->id}})"></span>
                                         </button>
-                                        <button x-on:click="edit=false" class="border-0 text-white bg-danger"><i class="fa fa-times"></i></button>
+                                        <button x-on:click="edit=false" class="border-0 text-white bg-danger px-2"><i class="fa fa-times"></i></button>
                                     </span>
                                 </td>
                                 <td class="py-0">{{ str($sale->note??'-')->limit() }}</td>
-                                 <td nowrap>
-                                     <button type="button" class="btn btn-danger btn-sm btn-circle" onclick="return confirm('{{trans('Are you sure?')}}') || event.stopImmediatePropagation()" wire:click.prevent="deletePayment({{$sale->id}})">
+                                 <td nowrap class="py-2px">
+                                     @php($deleteConfirmMsg=trans('Are you sure? Do you want to delete this payment record? This action cannot be undone.'))
+                                     <button type="button" class="btn btn-danger btn-sm" onclick="return confirm('{{$deleteConfirmMsg}}') || event.stopImmediatePropagation()" wire:click.prevent="deletePayment({{$sale->id}})">
                                          <i class="fa fa-trash-o"></i>
                                      </button>
                                  </td>

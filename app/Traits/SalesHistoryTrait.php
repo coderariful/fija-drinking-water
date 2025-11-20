@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use App\Models\Customer;
-use App\Models\Payments;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,7 +34,7 @@ trait SalesHistoryTrait
 
     private function getSalesHistories(array $dates, $user): ?Collection
     {
-        return $user?->purchases()
+        return $user?->sales()
             ->where('product_type', PRODUCT_WATER)
             ->when(request('month'), fn(Builder $query, $month) => $query->where(DB::raw('MONTH(purchases.created_at)'), $month))
             ->when(request('year'), fn(Builder $query, $year) => $query->where(DB::raw('YEAR(purchases.created_at)'), $year))
@@ -99,7 +98,7 @@ trait SalesHistoryTrait
         $previous = $this->getPreviousSalesHistories($dates, $user);
 
         $total_sell = Transaction::where('user_id', $user?->id)->sum('total_cost');
-        $total_paid = Payments::where('user_id', $user?->id)->sum('amount');
+        $total_paid = Transaction::where('user_id', $user?->id)->sum('amount');
 
         return [
             'groups' => $groups,
@@ -110,7 +109,7 @@ trait SalesHistoryTrait
             'jar_in_count' => $histories?->sum('in_quantity'),
             'jar_out_count' => $histories?->sum('out_quantity'),
             'sell_amount' => Transaction::whereIn('id', $saleIds)->sum('total_cost'),
-            'collection_amount' => Payments::whereIn('id', $paymentIds)->sum('amount'),
+            'collection_amount' => Transaction::whereIn('id', $paymentIds)->sum('amount'),
             'customer'=> Customer::when(request('customer_id'), fn($q, $id) => $q->where('id', $id))->first(),
             'showCurrentFilter' => $this->showCurrentSalesFilter(),
             'customer_id' => request('customer_id'),

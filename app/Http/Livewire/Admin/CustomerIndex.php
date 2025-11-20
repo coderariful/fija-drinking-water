@@ -10,6 +10,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -44,18 +45,27 @@ class CustomerIndex extends Component
 
     public function render(): Factory|View|Application
     {
-        $customers = $this->getCustomers();
+        $printUrl = route('print.customer-list', [
+            'status' => $this->status,
+            'keyword' => $this->keyword,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'employee_id' => $this->employee_id,
+            'showDue' => $this->showDue,
+            'view' => 'on',
+        ]);
+
         return view('livewire.admin.customer-index', [
-            'customers' => $customers,
+            'customers' => $this->getCustomers(),
             'employees' => $this->getEmployees(),
+            'printUrl' => $printUrl,
         ]);
     }
 
     public function getCustomers(): LengthAwarePaginator|array
     {
-        $purchaseWater = ['purchase'=>'whereProductTypeWater'];
-
         $query = Customer::query()
+            ->withTransactions()
             ->when($this->keyword, function (Builder $builder, $keyword) {
                 $builder->where('name', 'like', "%$keyword%")
                     ->orWhere('phone', 'like', "%$keyword%");
@@ -73,28 +83,25 @@ class CustomerIndex extends Component
                 $builder->where(DB::raw('DATE(created_at)'), date('Y-m-d'));
             })
             ->when($this->showDue, function (Builder $builder) {
-                $query_sum_sales_total_cost = 'ifnull((select sum(sales.total_cost) from sales where customers.id = sales.customer_id),0)';
-                $query_sum_payments_amount = 'ifnull((select sum(payments.amount) from payments where customers.id = payments.customer_id),0)';
-                $builder->where(DB::raw("($query_sum_sales_total_cost - $query_sum_payments_amount)"), '>', 0);
+                // $builder->where(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);
+                $builder->having(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);
             })
             ->where('status', '=', $this->status)
             ->orderBy('status')
             ->with('user')
-            ->withSum('sales', 'total_cost')
-            ->withSum('payments', 'amount')
-            ->withSum($purchaseWater, 'in_quantity')
-            ->withSum($purchaseWater, 'out_quantity')
             ->latest('id');
+
+        // dd($query->take(10)->get());
 
         return $query->paginate(RECORDS_PER_PAGE);
     }
 
-    public function getEmployees()
+    public function getEmployees(): Collection|array
     {
         return User::all();
     }
 
-    function sendToAll()
+    function sendToAll(): void
     {
         dispatch(new SendBulkSmsToAllJob);
 

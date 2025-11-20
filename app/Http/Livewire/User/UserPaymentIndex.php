@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\User;
 
 use App\Models\Customer;
-use App\Models\Payments;
+use App\Models\Transaction;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
@@ -62,7 +62,7 @@ class UserPaymentIndex extends Component
     public function render(): Factory|View|Application
     {
         return view('livewire.user.user-payment-index', [
-            'sales' => Payments::query()
+            'sales' => Transaction::query()
                 ->with(['customer', 'user'])
                 ->where('user_id', auth()->id())
                 ->when($this->customer_id, fn($query, $customer_id) => $query->where('customer_id', $customer_id))

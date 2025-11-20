@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
-use App\Models\Payments;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
@@ -32,9 +31,9 @@ class DashboardController extends Controller
             'total_sell_today' => $total_sell_today,
             'total_collect_today' => $total_collect_today,
             'total_due_today' => max($due_today, 0),
-            'dispenser' =>  [],//Product::where('type', Product::DISPENSER)->withCount('sales')->get(),
+            'dispenser' => [], //Product::where('type', Product::DISPENSER)->withCount('sales')->get(),
             'jar_sale_today' => Transaction::today()->where('product_type', Product::WATER)->count(),
-            'jar_sale_this_month' => Transaction::today()->where('product_type', Product::WATER)->count(),
+            'jar_sale_this_month' => Transaction::thisMonth()->where('product_type', Product::WATER)->count(),
             'total_due' => max($total_due, 0),
         ]);
     }
@@ -45,11 +44,11 @@ class DashboardController extends Controller
 
         $jar_stock = Transaction::whereRelation('customer', 'user_id', $user_id)->where('product_type', Product::WATER)->selectRaw('SUM(in_quantity) as in_qty, SUM(out_quantity) as out_qty')->first();
         $total_sell_today = Transaction::where('user_id', $user_id)->today()->sum('total_cost');
-        $total_collect_today =  Payments::where('user_id', $user_id)->today()->sum('amount');
+        $total_collect_today =  Transaction::where('user_id', $user_id)->today()->sum('amount');
         $due_today = $total_sell_today - $total_collect_today;
 
         $total_sell = Transaction::where('user_id', $user_id)->sum('total_cost');
-        $total_paid = Payments::where('user_id', $user_id)->sum('amount');
+        $total_paid = Transaction::where('user_id', $user_id)->sum('amount');
 
         return view('user.dashboard', [
             'title' => trans('Dashboard'),

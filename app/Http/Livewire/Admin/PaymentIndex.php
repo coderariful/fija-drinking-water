@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\Admin;
 
 use App\Models\Customer;
-use App\Models\Payments;
+use App\Models\Transaction;
 use App\Models\Product;
 use App\Models\User;
 use Exception;
@@ -27,7 +27,7 @@ class PaymentIndex extends Component
     public $start_date;
     public $end_date;
 
-    public $amounts = [];
+    public $paid_amount = [];
     public $date_created = [];
 
     public function mount()
@@ -47,11 +47,9 @@ class PaymentIndex extends Component
         }
     }
 
-    public function deletePayment(Payments $payment)
+    public function deletePayment(Transaction $payment): void
     {
         try {
-            $payment->purchase?->sale?->delete();
-            $payment->purchase?->delete();
             $payment->delete();
 
             flash(trans("Payment entry deleted."), "success");
@@ -60,10 +58,10 @@ class PaymentIndex extends Component
         }
     }
 
-    public function saveAmountUpdate(Payments $payment)
+    public function saveAmountUpdate(Transaction $payment): void
     {
         try {
-            $payment->amount = $this->amounts[$payment->id];
+            $payment->paid_amount = $this->paid_amount[$payment->id];
             $payment->save();
 
             flash(trans('Sale quantity entry updated!'));
@@ -74,7 +72,7 @@ class PaymentIndex extends Component
         }
     }
 
-    public function saveDateUpdate(Payments $payment)
+    public function saveDateUpdate(Transaction $payment): void
     {
         try {
             $payment->created_at = $this->date_created[$payment->id];
@@ -101,26 +99,28 @@ class PaymentIndex extends Component
     }
 
 
-    public function updatedOnlyDate()
+    public function updatedOnlyDate(): void
     {
         $this->start_date = null;
         $this->end_date = null;
     }
 
-    public function updatedStartDate()
+    public function updatedStartDate(): void
     {
         $this->only_date = null;
     }
 
-    public function updatedEndDate()
+    public function updatedEndDate(): void
     {
         $this->only_date = null;
     }
 
     public function render(): Factory|View|Application
     {
-        $payments = Payments::query()
+        $payments = Transaction::query()
             ->with(['customer', 'user'])
+            ->where('paid_amount', '>', 0)
+            ->when($this->product_id, fn($query, $product_id) => $query->where('product_id', $product_id))
             ->when($this->employee_id, fn($query, $employee_id) => $query->where('user_id', $employee_id))
             ->when($this->customer_id, fn($query, $customer_id) => $query->where('customer_id', $customer_id))
             ->when($this->keyword, function(Builder $builder, $keyword) {
@@ -138,10 +138,12 @@ class PaymentIndex extends Component
             ->when($this->end_date, function (Builder $builder, $end_date) {
                 $builder->whereDate('created_at', '<=', $end_date);
             })
-            ->paginate(10);
+            ->latest('created_at')
+            ->latest('id')
+            ->paginate(50);
 
         foreach ($payments as $sale) {
-            $this->amounts[$sale->id] = $sale->amount;
+            $this->paid_amount[$sale->id] = $sale->paid_amount;
             $this->date_created[$sale->id] = $sale->created_at?->format('Y-m-d');
         }
 

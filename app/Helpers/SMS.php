@@ -44,24 +44,24 @@ class SMS
         }
         if ($templateName === 'customer-daily-sms') {
             $params = [
-                "{bill_amount}" => (int) $customer->sales()->whereDate('created_at', today())->sum('total_cost'),
-                "{paid_amount}" => (int) $customer->payments()->whereDate('created_at', today())->sum('amount'),
-                "{due_amount}"  => intval($customer->due_amount),
-                "{jar_stock}"   => intval($customer->jar_stock),
-                "{jar_return}"  => (int) $customer->purchase()->whereDate('created_at', today())->sum('out_quantity'),
-                "{jar_count}"   => (int) $customer->purchase()->whereDate('created_at', today())->sum('in_quantity'),
+                "{bill_amount}" => (int) $customer->sales()->whereDate('created_at', today())->sum('total_amount'),
+                "{paid_amount}" => (int) $customer->sales()->whereDate('created_at', today())->sum('paid_amount'),
+                "{due_amount}"  => intval($customer->getDueAmount()),
+                "{jar_stock}"   => intval($customer->getJarStock()),
+                "{jar_return}"  => (int) $customer->sales()->whereDate('created_at', today())->sum('out_quantity'),
+                "{jar_count}"   => (int) $customer->sales()->whereDate('created_at', today())->sum('in_quantity'),
                 "{jar_rate}"    => (int) $customer->sales()->whereDate('created_at', today())->latest('id')->first()?->rate,
             ];
         }
         if ($templateName === 'due-sms') {
             $params = [
-                "{due_amount}"  => intval($customer->due_amount),
+                "{due_amount}"  => intval($customer->getDueAmount()),
             ];
         }
         if ($templateName === 'customer-monthly-sms') {
             $params = [
                 "{month_name}"   => banglaMonth(today()->monthName),
-                "{due_amount}"   => intval($customer->due_amount),
+                "{due_amount}"   => intval($customer->getDueAmount()),
                 "{bkash_number}" => config('sms.bkash_number'),
             ];
         }
@@ -76,7 +76,7 @@ class SMS
 
         if (config('sms.enabled')) {
             if (config('sms.sandbox')) {
-                $message ="Recipient: $phone_number\n\n$this->message";
+                $message ="Recipient: $phone_number\n---\n$this->message";
                 $phone_number = config('sms.test_number');
             }
 
@@ -136,7 +136,7 @@ class SMS
         return $this;
     }
 
-    public static function saveInHistory(int $customer_id, string $message, string $phone, string $template)
+    public static function saveInHistory(int $customer_id, string $phone, string $message, string $template)
     {
         return SmsHistory::create([
             'customer_id' => $customer_id,

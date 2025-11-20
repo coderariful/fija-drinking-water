@@ -1198,7 +1198,7 @@ h6 small, .h6 small, h6 .small, .h6 .small {
 }
 
 #wrapper.wrapper-header-fixed #wrapper-content {
-    padding-top: 80px;
+    padding-top: 60px;
 }
 
 /*------------------------------------------------
@@ -8025,4 +8025,74 @@ img.admin-avatar{
 /* rounded avatar */
 .roundedCircleAvatar{
     width: 32px !important;
+}
+
+.btn.btn-circle.btn-sm {
+    width: 28px;
+    height: 28px;
+    aspect-ratio: 1 !important;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.table-compact th , .table-compact td {
+    padding: 0.3rem;
+    line-height: 1.1;
+}
+
+.card-footer:has(.pagination) {
+    display: block;
+}
+
+.card-footer:has(.pagination) > div,
+.card-footer:has(.pagination) > div nav,
+.card-footer:has(.pagination) > div nav div {
+    width: 100% !important;
+}
+
+.card-footer:has(.pagination) > div nav div div:has(.pagination) {
+    display: flex;
+    justify-content: end;
+}
+
+.history-table table td {
+    padding-block: 0.15rem !important;
+}
+
+#wrapper-content .container-fluid {
+    padding-inline: 0 !important;
+}
+
+#wrapper-content .card {
+    margin-bottom: 0 !important;
+}
+
+.number-input {
+    -moz-appearance: textfield;
+}
+
+.number-input::-webkit-outer-spin-button,
+.number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.number-input:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+.py-2px {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+.py-4px {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+.table-compact input {
+    outline: none;
+    padding-inline: 4px;
+}
+#wrapper-content .dashboard-cards .card {
+    margin-bottom: 20px !important;
 }

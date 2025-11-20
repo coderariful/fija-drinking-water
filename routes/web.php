@@ -36,8 +36,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
     Route::get('print/card/{customer}', [PrintController::class, 'printCard'])->name('print.card');
-    Route::get('customer/print', [PrintController::class, 'customerListPrint'])->name('print.customer-list');
-    Route::get('sales/print/{user}', [PrintController::class, 'salesListPrint'])->name('print.sales-list');
+    Route::get('print/customer', [PrintController::class, 'customerListPrint'])->name('print.customer-list');
+    Route::get('print/customer/inactive', [PrintController::class, 'printInactiveCustomerList'])->name('print.customer-list.inactive');
+    Route::get('print/sales/{user}', [PrintController::class, 'salesListPrint'])->name('print.sales-list');
 
     Route::prefix('admin')->as('admin.')->middleware(['admin'])->group(function () {
         Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');

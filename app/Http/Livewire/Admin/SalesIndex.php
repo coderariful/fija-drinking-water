@@ -29,9 +29,10 @@ class SalesIndex extends Component
     public $type = 'day';
 
     public $quantity = [];
+    public $paid_amount = [];
     public $date_created = [];
 
-    public function mount()
+    public function mount(): void
     {
         if (request('product')) {
             if (request('product') == 'jar') {
@@ -96,12 +97,10 @@ class SalesIndex extends Component
     {
         try {
             $sale->quantity = $this->quantity[$sale->id];
-            $sale->total_cost = $sale->rate * $sale->quantity;
+            $sale->total_amount = $sale->rate * $sale->quantity;
+            $sale->paid_amount = $this->paid_amount[$sale->id];
+            $sale->in_quantity = $sale->quantity;
             $sale->save();
-
-            $purchase = $sale->purchase;
-            $purchase->in_quantity = $sale->quantity;
-            $purchase->save();
 
             flash(trans('Sale quantity entry updated!'));
 
@@ -161,10 +160,11 @@ class SalesIndex extends Component
             })
             ->latest('created_at')
             ->latest('id')
-            ->paginate(20);
+            ->paginate(50);
 
         foreach ($sales as $sale) {
             $this->quantity[$sale->id] = $sale->quantity;
+            $this->paid_amount[$sale->id] = $sale->paid_amount;
             $this->date_created[$sale->id] = $sale->created_at?->format('Y-m-d');
         }
 

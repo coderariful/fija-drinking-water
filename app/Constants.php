@@ -26,6 +26,7 @@ const CUSTOMER_ACCEPTED = CustomerHistory::ACCEPTED;
 
 
 const DATE_FORMAT = 'd-M-Y';
+const PRINT_DATE_FORMAT = 'd-m-Y';
 
 const BILLING_DAILY = Customer::DAILY;
 const BILLING_MONTHLY = Customer::MONTHLY;

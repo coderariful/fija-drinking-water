@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SmsHistory extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'customer_id',
         'template',

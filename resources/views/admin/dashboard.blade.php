@@ -18,12 +18,12 @@
 </div>
 
 
-<div class="row">
+<div class="row dashboard-cards mx-2">
     <div class="col-xl-3 col-sm-6">
         <a href="{{route('admin.customer.index')}}">
             <div class="card card-dark bg-primary">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Customers') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $total_customer ?? 0 }}</h3>
@@ -37,7 +37,7 @@
         <a href="{{route('admin.customer.index', ['day' => 'today'])}}">
             <div class="card card-dark bg-success">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('New Customer Today') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $new_customer ?? 0 }}</h3>
@@ -51,7 +51,7 @@
         <a href="{{route('admin.customer.pending')}}">
             <div class="card card-dark bg-danger">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Pending Customer') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $pending_customer }}</h3>
@@ -66,7 +66,7 @@
         <a href="{{route('admin.employee.index')}}">
             <div class="card card-dark bg-dark">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Employees') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $total_employee ?? 0 }}</h3>
@@ -80,7 +80,7 @@
         <a href="{{route('admin.customer.index')}}">
             <div class="card card-dark bg-secondary">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Jar Stock') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $total_jar_stock ?? 0 }}</h3>
@@ -94,7 +94,7 @@
         <a href="{{route('admin.sales.index', ['day' => 'today'])}}">
             <div class="card card-dark bg-warning">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Sell Today') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $total_sell_today }}</h3>
@@ -108,7 +108,7 @@
         <a href="{{route('admin.payments.index', ['day' => 'today'])}}">
             <div class="card card-dark bg-info">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Collection Today') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $total_collect_today }}</h3>
@@ -122,7 +122,7 @@
         <a href="{{route('admin.customer.index', ['day' => 'today'])}}">
             <div class="card card-dark bg-indigo">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Due Today') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ roundFormat($total_due_today) }}</h3>
@@ -136,7 +136,7 @@
         <a href="{{route('admin.sales.index', ['day' => 'today', 'product' => 'jar'])}}">
             <div class="card card-dark bg-blue">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Jar Sell Today') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $jar_sale_today }}</h3>
@@ -150,7 +150,7 @@
         <a href="{{route('admin.sales.index', ['range' => 'month', 'product' => 'jar'])}}">
             <div class="card card-dark bg-deep-purple">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Jar Sell This Month') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $jar_sale_this_month }}</h3>
@@ -164,7 +164,7 @@
         <a href="{{route('admin.sales.index', ['range' => 'month', 'product' => 'jar'])}}">
             <div class="card card-dark bg-deep-purple">
                 <div class="card-body d-flex">
-                    <i class="display-2 material-icons">people</i>
+                    <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Due') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $total_due }}</h3>
@@ -179,7 +179,7 @@
             <a href="{{route('admin.sales.index', ['product' => $dispense->id])}}">
                 <div class="card card-dark {{fake()->randomElement(['bg-light-blue', 'bg-light-green'])}}">
                     <div class="card-body d-flex">
-                        <i class="display-2 material-icons">people</i>
+                        <i class="display-2 fa fa-users"></i>
                         <div class="ml-auto align-self-center text-right">
                             <span class="card-title mb-1">{{ $dispense->name }}</span>
                             <h3 class="card-title font-montserrat mb-0">{{ $dispense->sales_count  }}</h3>

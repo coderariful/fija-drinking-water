@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
-use App\Models\Payments;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Traits\CustomerCardTrait;
@@ -54,5 +53,19 @@ class PrintController extends Controller
         }
 
         return Pdf::loadView('pdf.sales', $data)->setPaper('a4')->stream('sales');
+    }
+
+    public function printInactiveCustomerList()
+    {
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '4096M');
+
+        $data = $this->getInactiveCustomerListData();
+
+        if (request('view') == 'on') {
+            return view('pdf.customer', $data);
+        }
+
+        return Pdf::loadView('pdf.customer', $data)->setPaper('a4', 'landscape')->stream('customer_list');
     }
 }
