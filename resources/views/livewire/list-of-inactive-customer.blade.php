@@ -2,7 +2,8 @@
     <div class="col-12">
         <div class="card card-dark bg-dark">
             <div class="card-header d-block">
-{{--                <form action="{{route('print.customer-list')}}">--}}
+                <form action="{{ $printUrl }}" onsubmit="return confirm('Are you sure to print?')" target="_blank">
+                    <input type="hidden" name="view" value="on">
                     <div class="row">
                         <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
                             <h6 class="card-title">{{$title}}</h6>
@@ -18,16 +19,14 @@
                         </div>
                         <div class="col-md-6 col-sm-12 d-flex">
                             <div class="input-group">
-                                <input type="date" class="form-control w-25" wire:model.live="start_date" name="start_date">
-                                <input type="date" class="form-control w-25" wire:model.live="end_date" name="end_date">
+                                {{--<input type="date" class="form-control w-25" wire:model.live="start_date" name="start_date">--}}
+                                {{--<input type="date" class="form-control w-25" wire:model.live="end_date" name="end_date">--}}
                                 <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.live.debounce="keyword" name="keyword">
                             </div>
-                            <form action="{{ $printUrl }}" onsubmit="return confirm('Are you sure to print?')" target="_blank">
-                                <button class="ml-2 btn btn-success">Print</button>
-                            </form>
+                            <button class="ml-2 btn btn-success">Print</button>
                         </div>
                     </div>
-                {{-- </form> --}}
+                 </form>
             </div>
             <div class="card-body position-relative">
                 <x-admin.table-processing-indicator/>

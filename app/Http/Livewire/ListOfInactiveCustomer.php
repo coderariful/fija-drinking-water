@@ -36,13 +36,7 @@ class ListOfInactiveCustomer extends Component
         return view('livewire.list-of-inactive-customer',[
             'customers' => $this->getCustomers(),
             'employees' => $this->getEmployees(),
-            'printUrl' => route('print.customer-list.inactive', [
-                'keyword' => $this->keyword,
-                'employee_id' => $this->employee_id,
-                'start_date' => $this->start_date,
-                'end_date' => $this->end_date,
-                'view' => 'on',
-            ]),
+            'printUrl' => route('print.customer-list.inactive'),
         ])->layout($layout, [
             'title' =>$this->title
         ]);

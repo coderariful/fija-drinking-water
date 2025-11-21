@@ -61,9 +61,7 @@
                                                     <i class="material-icons">assignment_ind</i>
                                                 </button>
                                             @else
-                                                <button type="button" class="btn btn-sm btn-info" title="Login As"
-                                                        wire:click.prevent="$call('impersonate', { user: {{$user->id}} })"
-                                                        data-toggle="tooltip" data-placement="top">
+                                                <button type="button" class="btn btn-sm btn-info" disabled>
                                                     <i class="material-icons">assignment_ind</i>
                                                 </button>
                                             @endif
@@ -80,7 +78,7 @@
                                                     <i class="material-icons">delete</i>
                                                 </button>
                                             @else
-                                                <a href="#" disabled class="btn btn-info btn-sm" title="Edit">
+                                                <a href="#" class="btn btn-info btn-sm disabled" title="Edit" disabled>
                                                     <i class="material-icons">edit</i>
                                                 </a>
                                                 <button class="btn btn-danger btn-sm" title="Delete" disabled>
