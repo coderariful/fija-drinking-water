@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        /*
         $customer = new class extends Customer {
             use SoftDeletes;
             protected $connection = 'mysql';
             protected $table = 'customers';
         };
-
         $customer->query()->onlyTrashed()->forceDelete();
+        */
     }
 
     /**

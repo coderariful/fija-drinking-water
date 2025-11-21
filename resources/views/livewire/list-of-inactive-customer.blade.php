@@ -79,7 +79,7 @@
                                 <td>
                                     <span title="{{$customer->address}}">{{ str($customer->address??'')->limit(20) }}</span>
                                 </td>
-                                <td class="text-center">{{ $customer->jar_rate ? round($customer->jar_rate) : '-' }}</td>
+                                <td class="text-center">{{ $customer->jar_rate ? round($customer->jar_rate, 2) : '-' }}</td>
                                 <td class="text-center">{{ $customer->jar_stock }}</td>
                                 <td class="text-right">{{ $customer->due_amount }}</td>
                                 <td class="text-center" style="padding-block: .15rem; line-height: 1">

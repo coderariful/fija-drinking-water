@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class Customer extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     const PENDING = 0;
     const APPROVED = 1;

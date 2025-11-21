@@ -30,7 +30,7 @@ trait CustomerCardTrait
             ->whereDate('created_at', '<', $date)
             ->sum('paid_amount');
 
-        $previous_due = round($previous_sales - $previous_payments);
+        $previous_due = round($previous_sales - $previous_payments, 2);
 
         $query = $customer->sales()
             ->orderBy('created_at');

@@ -91,7 +91,7 @@ class SellModal extends Component
         $sale = Transaction::create([
             'customer_id'  => $this->customer->id,
             'product_id'  => $this->product->id,
-            'user_id'      => auth()->user()->id,
+            'user_id'      => $this->customer->user_id,
             'product_type' => $this->product->type,
             'in_quantity'  => $this->quantity,
             'out_quantity' => $this->out_quantity,

@@ -87,19 +87,19 @@
                 </td>
                 <td>
                     <div class="text-center">
-                        <p class="h3 mb-0">{{round($sell_amount)}}/-</p>
+                        <p class="h3 mb-0">{{round($sell_amount, 2)}}/-</p>
                         <strong>{{trans('Sell Amount')}}</strong>
                     </div>
                 </td>
                 <td>
                     <div class="text-center">
-                        <p class="h3 mb-0">{{round($collection_amount)}}/-</p>
+                        <p class="h3 mb-0">{{round($collection_amount, 2)}}/-</p>
                         <strong>{{trans('Collection')}}</strong>
                     </div>
                 </td>
                 <td>
                     <div class="text-center">
-                        <p class="h3 mb-0">{{round($sell_amount-$collection_amount)}}/-</p>
+                        <p class="h3 mb-0">{{round($sell_amount-$collection_amount, 2)}}/-</p>
                         <strong>{{trans('Due Amount')}}</strong>
                     </div>
                 </td>
@@ -138,18 +138,18 @@
                             <td class="text-center align-middle" rowspan="{{count($histories)+1}}">{{$loop->iteration}}</td>
                             <td class="text-center py-0" rowspan="{{count($histories)+1}}">{{$history?->customer?->phone}}</td>
                             <td class="text-left py-0" rowspan="{{count($histories)+1}}">{{$history?->customer?->name}}<br>{{$history?->customer?->address}}</td>
-                            <td class="text-center py-0" rowspan="{{count($histories)+1}}">{{round($history?->customer?->jar_rate)}}/-</td>
+                            <td class="text-center py-0" rowspan="{{count($histories)+1}}">{{round($history?->customer?->jar_rate, 2)}}/-</td>
                         @else
                             <td class="text-center align-middle">{{$loop->iteration}}</td>
                             <td class="text-center py-0">{{$history?->customer?->phone}}</td>
                             <td class="text-left py-0">{{$history?->customer?->name}}<br>{{$history?->customer?->address}}</td>
-                            <td class="text-center py-0">{{round($history?->customer?->jar_rate)}}/-</td>
+                            <td class="text-center py-0">{{round($history?->customer?->jar_rate, 2)}}/-</td>
                             <td class="text-center py-0">{{formatDate($history->created_at, DATE_FORMAT)}}</td>
                             <td class="text-center py-0">{{$history->in_quantity}}</td>
                             <td class="text-center py-0">{{$history->out_quantity}}</td>
                             <td class="text-center py-0">{{$history->jar_stock}}</td>
-                            <td class="text-center py-0">{{round($history->payment?->amount ?? 0)}}</td>
-                            <td class="text-center py-0">{{round($history->due_till_date) ?? 0}}</td>
+                            <td class="text-center py-0">{{round($history->payment?->amount ?? 0, 2)}}</td>
+                            <td class="text-center py-0">{{round($history->due_till_date ?? 0, 2)}}</td>
                             <td class="text-center py-0">{{$history->note ?? '-'}}</td>
                         @endif
                     </tr>
@@ -160,8 +160,8 @@
                                 <td class="text-center py-0">{{$history->in_quantity}}</td>
                                 <td class="text-center py-0">{{$history->out_quantity}}</td>
                                 <td class="text-center py-0">{{$history->jar_stock}}</td>
-                                <td class="text-center py-0">{{round($history->payment?->amount ?? 0)}}</td>
-                                <td class="text-center py-0">{{round($history->due_till_date) ?? 0}}</td>
+                                <td class="text-center py-0">{{round($history->payment?->amount ?? 0, 2)}}</td>
+                                <td class="text-center py-0">{{round($history->due_till_date ?? 0, 2)}}</td>
                                 <td class="text-center py-0">{{$history->note ?? '-'}}</td>
                             </tr>
                         @endforeach

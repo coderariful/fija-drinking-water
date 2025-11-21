@@ -47,7 +47,7 @@
             {!! join("<br>", $dispenser) !!}
         </div>
         <div class="border px-1 float-right rounded"  style="line-height:1;padding:2px 2px 1px">
-            {{round($customer->jar_rate)}} Tk/Jar
+            {{round($customer->jar_rate, 2)}} Tk/Jar
         </div>
         <div class="text-center my-3 mx-auto" style="width: max-content">
             <div class="float-left mr-3">
@@ -106,8 +106,8 @@
                         @else
                             <td class="text-center table-column" colspan="3">{{$history->in_quantity}} &times; {{str($history->product_type)->title}} - {{$history->rate}} Tk</td>
                         @endif
-                        <td class="text-center table-column">{{round($history->payment?->amount ?? 0.00)}}</td>
-                        <td class="text-center table-column">{{round($due_amount) ?? 0.00}}</td>
+                        <td class="text-center table-column">{{round($history->payment?->amount ?? 0.00, 2)}}</td>
+                        <td class="text-center table-column">{{round($due_amount ?? 0.00, 2)}}</td>
                         <td class="text-center table-column">{{$history->note ?? '-'}}</td>
                     </tr>
                 @empty

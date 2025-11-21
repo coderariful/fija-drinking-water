@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Customer;
 use App\Models\Transaction;
+use App\Traits\CustomerQueryTrait;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +15,8 @@ use Livewire\Component;
 
 class PurchaseHistoryModal extends Component
 {
+    use CustomerQueryTrait;
+
     public ?Customer $customer = null;
 
     protected $listeners = [
@@ -154,12 +157,21 @@ class PurchaseHistoryModal extends Component
             $this->in_quantity[$history->id] = $history->in_quantity;
             $this->out_quantity[$history->id] = $history->out_quantity;
             $this->date_created[$history->id] = $history->created_at?->format('Y-m-d');
-            $this->payment[$history->id] = round($history->payment?->amount ?? 0);
+            $this->payment[$history->id] = round($history->payment?->amount ?? 0, 2);
         }
+
+        $printUrl = $this->customer ? route('print.card', [
+            'customer' => $this->customer,
+            'filter' => $this->filterType,
+            'date' => [$this->start_date, $this->end_date],
+            'month' => $this->month,
+            'year' => $this->year
+        ]) : null;
 
         return view('livewire.purchase-history-modal', [
             'histories'=> $histories,
             'previous_due' => $previous_due,
+            'print_url' => $printUrl
         ]);
     }
 
@@ -202,7 +214,7 @@ class PurchaseHistoryModal extends Component
             ->whereDate('created_at', '<', $date)
             ->sum('paid_amount');
 
-        return round($previous_sales - $previous_payments);
+        return round($previous_sales - $previous_payments, 2);
     }
 
     public function placeholder(): string
@@ -215,17 +227,5 @@ class PurchaseHistoryModal extends Component
                 <div class="h-4 bg-gray-300 rounded w-5/6"></div>
             </div>
         HTML;
-    }
-
-    private function addSelectStockSubquery(string $PRODUCT_WATER): Builder|Transaction
-    {
-        return Transaction::from('transactions as t2')
-            ->selectRaw('IFNULL(SUM(t2.in_quantity),0)-IFNULL(SUM(t2.out_quantity),0) AS jar_stock')
-            ->whereColumn('t2.customer_id', 'transactions.customer_id')
-            ->where('t2.product_type', $PRODUCT_WATER)
-            ->whereColumn('t2.created_at', '<=', 'transactions.created_at')
-            ->orderBy('created_at')
-            ->orderBy('id')
-            ->limit(1);
     }
 }

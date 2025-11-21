@@ -40,7 +40,7 @@
 <div class="container-fluid">
     <img src="{{asset('logo.png')}}" alt="watermark" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.1;z-index:-999;">
     <div class="text-center">
-        <h6>Customer List</h6>
+        <h5>Customer List</h5>
     </div>
     <div class="mb-3">
         <table class="table table-sm table-bordered customer-list">

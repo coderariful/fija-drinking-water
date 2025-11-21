@@ -56,7 +56,7 @@
             <thead>
             <tr>
                 <th class="align-middle text-center" rowspan="2">{{trans('Date')}}</th>
-                <th class="align-middle text-center" colspan="3">{{trans('Jar')}}/{{trans('Jar')}}</th>
+                <th class="align-middle text-center" colspan="3">{{trans('Jar')}}</th>
                 <th class="align-middle text-center" colspan="2">{{trans('Amount')}}</th>
                 <th class="align-middle text-center" rowspan="2">{{trans('Comment')}}</th>
             </tr>
@@ -92,9 +92,9 @@
                         @endif
                         <td class="text-center">{{$history->stock_qty}}</td>
                         <td class="text-center">
-                            <x-editable-column model="payment" method="savePaymentUpdate" :item-id="$history->id" :value="round($history->paid_amount ?? 0)"  input-type="number" :input-style="['width:70px']"/>
+                            <x-editable-column model="payment" method="savePaymentUpdate" :item-id="$history->id" :value="round($history->paid_amount ?? 0, 2)"  input-type="number" :input-style="['width:70px']"/>
                         </td>
-                        <td class="text-center">{{round($due_amount) ?? 0}}</td>
+                        <td class="text-center">{{round($due_amount ?? 0, 2)}}</td>
                         <td class="text-center">{{$history->note ?? '-'}}</td>
                     </tr>
                 @empty

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Admin;
 
 use App\Models\User;
+use DB;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,11 +24,12 @@ class EmployeeIndex extends Component
     private function getUsers(): LengthAwarePaginator|array
     {
         return User::query()
-            ->where('user_type', '=', USER_EMPLOYEE)
+            ->withTransactions()
             ->when(request('keyword', $this->keyword), function (Builder $query, $keyword){
                 $query->where('name', 'LIKE', '%'. $keyword .'%')
                     ->orWhere('phone', 'LIKE', '%'. $keyword .'%');
             })
+            // ->havingRaw('exists ( select c.id from customers c where t.customer_id = c.id )')
             ->latest('id')
             ->paginate(RECORDS_PER_PAGE);
     }

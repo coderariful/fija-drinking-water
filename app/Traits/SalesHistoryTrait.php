@@ -74,8 +74,8 @@ trait SalesHistoryTrait
             ->whereDate('purchases.created_at', '<', $date);
 
         return (object)[
-            'sales' => round((int)$previous_sales),
-            'payments' => round((int)$previous_payments),
+            'sales' => round((int)$previous_sales, 2),
+            'payments' => round((int)$previous_payments, 2),
             'jar_in' => (int)$purchases?->sum('in_quantity'),
             'jar_out' => (int)$purchases?->sum('out_quantity'),
         ];

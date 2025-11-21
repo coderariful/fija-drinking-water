@@ -131,8 +131,8 @@
                                         <button x-on:click="edit=false" class="border-0 text-white bg-danger"><i class="fa fa-times"></i></button>
                                     </span>
                                 </td>
-                                <td class="py-1 text-center">{{ round($sale->total_amount) }}</td>
-                                <td class="py-1 text-center">{{ round($sale->paid_amount) }}</td>
+                                <td class="py-1 text-center">{{ round($sale->total_amount, 2) }}</td>
+                                <td class="py-1 text-center">{{ round($sale->paid_amount, 2) }}</td>
                                 <td class="py-1">{{ str($sale->note??'-')->limit() }}</td>
                                 <td class="py-2px">
                                     @php($deleteConfirmMsg = trans('Are you sure? You want to delete this sale?\nThis action cannot be undone.'))

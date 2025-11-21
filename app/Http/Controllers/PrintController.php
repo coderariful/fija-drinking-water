@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use function Symfony\Component\String\s;
 
 class PrintController extends Controller
 {

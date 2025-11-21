@@ -31,55 +31,58 @@ trait CustomerTrait
     {
         $product = Product::firstWhere('type', Product::WATER);
 
+        $data = [];
+
         if ($request->has('due_amount') && $request->get('due_amount') > 0) {
-            $sale = Transaction::create([
+            $data = [
+                ...$data,
                 'product_id' => $product->id,
                 'customer_id' => $customer->id,
                 'user_id' => $customer->user_id,
-                'quantity' => $request->get('jar_stock', 0),
+                'in_quantity' => 0,
+                'out_quantity' => 0,
+                'quantity' => 0,
                 'rate' => $customer->jar_rate,
-                'total_cost' => $request->get('due_amount'),
+                'total_amount' => $request->get('due_amount'),
                 'product_type' => Product::WATER,
                 'created_at' => $customer->issue_date,
-            ]);
+            ];
         }
 
         if ($request->has('jar_stock') && $request->get('jar_stock') > 0) {
-            Transaction::create([
+            $data = [
+                ...$data,
                 'customer_id' => $customer->id,
                 'product_id' => $product->id,
-                'sale_id' => $sale->id ?? null,
-                'payment_id' => null,
+                'user_id' => $customer->user_id,
                 'product_type' => Product::WATER,
-                'in_quantity' => $request->get('jar_stock'),
+                'in_quantity' => $request->get('jar_stock', 0),
                 'out_quantity' => 0,
+                'quantity' => $request->get('jar_stock', 0),
                 'rate' => $customer->jar_rate,
                 'created_at' => $customer->issue_date,
-            ]);
+            ];
         }
+
+        if (isset($data['customer_id']) && isset($data['user_id'])) {
+            Transaction::create($data);
+        }
+
 
         if ($request->has('dispenser') && $request->get('dispenser') != '') {
             $dispenser = Product::where('type', Product::DISPENSER)->find($request->get('dispenser'));
             if($dispenser) {
-                $sale = Transaction::create([
+                Transaction::create([
                     'product_id' => $dispenser->id,
                     'customer_id' => $customer->id,
                     'user_id' => $customer->user_id,
+                    'in_quantity' => 0,
+                    'out_quantity' => 0,
                     'quantity' => 1,
                     'rate' => $dispenser->price,
-                    'total_cost' => $dispenser->price,
+                    'total_amount' => $dispenser->price,
                     'product_type' => Product::DISPENSER,
-                    'created_at' => $customer->issue_date,
-                ]);
-                Transaction::create([
-                    'customer_id' => $customer->id,
-                    'product_id' => $dispenser->id,
-                    'sale_id' => $sale->id ?? null,
-                    'payment_id' => null,
-                    'product_type' => Product::DISPENSER,
-                    'in_quantity' => 1,
-                    'out_quantity' => 0,
-                    'rate' => $dispenser->price,
+                    'paid_amount' => 0,
                     'created_at' => $customer->issue_date,
                 ]);
             }

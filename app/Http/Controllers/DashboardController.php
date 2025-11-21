@@ -12,14 +12,14 @@ class DashboardController extends Controller
     public function dashboard()
     {
         //$jar_stock = Purchase::where('product_type', Product::WATER)->selectRaw('SUM(in_quantity) as in_qty, SUM(out_quantity) as out_qty')->first();
-        $total_sell_today = Transaction::today()->sum('total_amount');
-        $total_collect_today =  Transaction::today()->sum('paid_amount');
+        $total_sell_today = Transaction::notObsulate()->today()->sum('total_amount');
+        $total_collect_today =  Transaction::notObsulate()->today()->sum('paid_amount');
         $due_today = $total_sell_today - $total_collect_today;
 
-        $jar_in_qty = Transaction::where('product_type', Product::WATER)->sum('in_quantity');
-        $jar_out_qty = Transaction::where('product_type', Product::WATER)->sum('out_quantity');
+        $jar_in_qty = Transaction::notObsulate()->where('product_type', Product::WATER)->sum('in_quantity');
+        $jar_out_qty = Transaction::notObsulate()->where('product_type', Product::WATER)->sum('out_quantity');
 
-        $total_due = Transaction::sum('total_amount') - Transaction::sum('paid_amount');
+        $total_due = Transaction::notObsulate()->sum('total_amount') - Transaction::notObsulate()->sum('paid_amount');
 
         return view('admin.dashboard', [
             'title' => trans('Dashboard'),

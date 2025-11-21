@@ -80,4 +80,9 @@ class Transaction extends Model
     {
         $query->where(DB::raw('MONTH(created_at)'), today()->month);
     }
+
+    public function scopeNotObsulate(Builder $query)
+    {
+        $query->whereHas('customer')->whereHas('user');
+    }
 }
