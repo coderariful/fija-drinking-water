@@ -8,7 +8,7 @@
             <div class="card mt-4">
                 <div class="card-body">
                     <div class="table-responsive style-scroll">
-                        <table class="table table-striped table-bordered">
+                        <table class="table table-striped table-bordered table-compact">
                             <thead>
                             <tr>
                                 <th scope="col">{{__('Serial')}}</th>
@@ -39,7 +39,7 @@
                                     <td class="text-center">{{ $customer->jar_rate??'-' }}</td>
                                     <td class="text-center">{{ $customer->jar_stock }}</td>
                                     <td class="text-center">{{ $customer->due_amount }}</td>
-                                    <td>{{ $customer->issue_date??'' }}</td>
+                                    <td>{{ $customer->issue_date?->format(DATE_FORMAT)??'' }}</td>
                                     <td>{{ str($customer->billing_type??'')->upper() }}</td>
                                     <td>
                                         @if($customer->status == CUSTOMER_APPROVED)
@@ -50,7 +50,7 @@
                                             <div class="bg-danger px-2 py-1 text-center rounded">REJECTED</div>
                                         @endif
                                     </td>
-                                    <td nowrap>
+                                    <td nowrap class="py-1">
                                         <button type="button"  class="btn btn-sm btn-warning" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$dispatchTo('sell-modal', 'open-modal', { customer: {{$customer->id}} })">
                                             <i class="material-icons">shopping_basket</i>
                                         </button>

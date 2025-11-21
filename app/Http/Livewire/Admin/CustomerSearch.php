@@ -24,12 +24,14 @@ class CustomerSearch extends Component
 
         return view('livewire.admin.customer-search', [
             'customers' => Customer::query()
+                ->withTransactions()
                 ->when(auth()->user()->user_type == USER_EMPLOYEE, fn($query) => $query->where('user_id', auth()->id()))
                 ->when($this->keyword, function (Builder $builder, $keyword) {
                     $builder->where('name', 'like', "%$keyword%")
                         ->orWhere('phone', 'like', "%$keyword%");
                 })
-                ->paginate(10)
+                ->with(['user'])
+                ->paginate(RECORDS_PER_PAGE)
         ])->extends("$layout.layouts.master", [
             'title' => 'Customer search'
         ]);
