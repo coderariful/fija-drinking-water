@@ -33,4 +33,13 @@ class EmployeeIndex extends Component
             ->latest('id')
             ->paginate(RECORDS_PER_PAGE);
     }
+
+    public function impersonate(User $user): void
+    {
+        session()->put('impersonated_by', auth()->id());
+
+        auth()->login($user);
+
+        $this->redirectRoute('user.dashboard');
+    }
 }

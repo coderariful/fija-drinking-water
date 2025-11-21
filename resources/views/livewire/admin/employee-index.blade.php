@@ -54,6 +54,20 @@
                                                 <i class="material-icons">assignment</i>
                                             </button>
 
+                                            @if($user->id != auth()->id())
+                                                <button type="button" class="btn btn-sm btn-info" title="Login As"
+                                                        wire:click.prevent="$call('impersonate', { user: {{$user->id}} })"
+                                                        data-toggle="tooltip" data-placement="top">
+                                                    <i class="material-icons">assignment_ind</i>
+                                                </button>
+                                            @else
+                                                <button type="button" class="btn btn-sm btn-info" title="Login As"
+                                                        wire:click.prevent="$call('impersonate', { user: {{$user->id}} })"
+                                                        data-toggle="tooltip" data-placement="top">
+                                                    <i class="material-icons">assignment_ind</i>
+                                                </button>
+                                            @endif
+
                                             @if($user->user_type!=USER_ADMIN)
                                                 <a href="{{route('admin.employee.edit', $user->id)}}"
                                                    class="btn btn-info btn-sm" title="Edit"

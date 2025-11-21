@@ -23,7 +23,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive style-scroll">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered table-compact">
                         <thead>
                         <tr>
                             <th scope="col">{{__('S/N')}}</th>
@@ -45,15 +45,17 @@
 
                         @forelse($customers as $customer)
                             <tr>
-                                <th>{{ paginationIndex($customers, $loop->iteration) }}</th>
+                                <th nowrap>{{ paginationIndex($customers, $loop->iteration) }}</th>
                                 <td nowrap>
-                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Add Sell" data-toggle="modal" data-target="#sellModal" wire:click="$dispatchTo('sell-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                    <button type="button"  class="btn btn-sm btn-warning" title="Add Sell" data-toggle="modal" data-target="#sellModal"
+                                            wire:click="$dispatchTo('sell-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">shopping_basket</i>
                                     </button>
-                                    <button type="button"  class="btn btn-sm btn-warning btn-circle" title="Payment" data-toggle="modal" data-target="#paymentModal" wire:click="$dispatchTo('payment-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                    {{--<button type="button"  class="btn btn-sm btn-warning" title="Payment" data-toggle="modal" data-target="#paymentModal" wire:click="$dispatchTo('payment-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">account_balance_wallet</i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-info btn-circle" title="Purchase History" data-toggle="modal" data-target="#historyModal" wire:click="$dispatchTo('purchase-history-modal', 'open-modal', {{$customer->id}})" data-bs-toggle="tooltip" data-placement="top">
+                                    </button>--}}
+                                    <button type="button" class="btn btn-sm btn-info" title="Purchase History" data-toggle="modal" data-target="#historyModal"
+                                            wire:click="$dispatchTo('purchase-history-modal', 'open-modal', { customer: {{$customer->id}} })" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">assignment</i>
                                     </button>
                                 </td>
@@ -79,11 +81,11 @@
                                 </td>
                                 <td>
                                     @if($customer->status == \App\Models\Customer::PENDING)
-                                        <a href="{{route('user.customer.edit',$customer->id)}}" class="btn btn-sm btn-success btn-circle disabled" title="Edit" data-bs-toggle="tooltip" data-placement="top">
+                                        <a href="{{route('user.customer.edit',$customer->id)}}" class="btn btn-sm btn-success disabled" title="Edit" data-bs-toggle="tooltip" data-placement="top">
                                             <i class="material-icons">edit</i>
                                         </a>
                                     @else
-                                        <a href="{{route('user.customer.edit',$customer->id)}}" class="btn btn-sm btn-success btn-circle" title="Edit" data-bs-toggle="tooltip" data-placement="top">
+                                        <a href="{{route('user.customer.edit',$customer->id)}}" class="btn btn-sm btn-success" title="Edit" data-bs-toggle="tooltip" data-placement="top">
                                             <i class="material-icons">edit</i>
                                         </a>
                                     @endif

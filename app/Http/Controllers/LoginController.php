@@ -45,5 +45,22 @@ class LoginController extends Controller
         }
     }
 
+    public function stopImpersonate()
+    {
+        if (!session()->has('impersonated_by')) {
+            return back()->with('error', 'You are not impersonating any user.');
+        }
+        $originalUserId = session()->get('impersonated_by');
+        session()->forget('impersonated_by');
 
+        $originalUser = User::find($originalUserId);
+        if ($originalUser) {
+            Auth::login($originalUser);
+            return redirect()->route('admin.employee.index')
+                ->with('success', 'Impersonation ended. You are now logged back in as the original user.');
+        }
+
+        return back()->with('error', 'Original user not found.');
+
+    }
 }

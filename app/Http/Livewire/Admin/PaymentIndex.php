@@ -118,6 +118,7 @@ class PaymentIndex extends Component
     public function render(): Factory|View|Application
     {
         $payments = Transaction::query()
+            ->notObsulate()
             ->with(['customer', 'user'])
             ->where('paid_amount', '>', 0)
             ->when($this->product_id, fn($query, $product_id) => $query->where('product_id', $product_id))
@@ -140,7 +141,7 @@ class PaymentIndex extends Component
             })
             ->latest('created_at')
             ->latest('id')
-            ->paginate(50);
+            ->paginate(RECORDS_PER_PAGE);
 
         foreach ($payments as $sale) {
             $this->paid_amount[$sale->id] = $sale->paid_amount;

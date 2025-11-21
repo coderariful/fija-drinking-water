@@ -1,20 +1,4 @@
 <ul class="sidebar-nav">
-    <!-- NAV ITEM -->
-    <li class="nav-item {{ (request()->is('user/dashboard')) ? 'active' : '' }}">
-        <a href="{{route('user.dashboard')}}" class="nav-link"><i class="material-icons">dashboard</i><span class="link-text">{{__('Dashboard')}}</span></a>
-    </li>
-
-    <li class="nav-item {{ Route::is('user.sales*') ? 'active' : '' }}">
-        <a href="{{route('user.sales.index')}}" class="nav-link">
-            <i class="material-icons">business_center</i><span class="link-text">{{__('Sales')}}</span>
-        </a>
-    </li>
-    <li class="nav-item {{ Route::is('user.payments*') ? 'active' : '' }}">
-        <a href="{{route('user.payments.index')}}" class="nav-link">
-            <i class="material-icons">payment</i><span class="link-text">{{__('Payments')}}</span>
-        </a>
-    </li>
-    <!--settings start -->
     <li class="nav-item has-dropdown {{ request()->is('user/add/new-customer*') || request()->is('user/all/customers*')  ? 'open' : '' }}">
         <a href="javascript:void(0);" class="nav-link">
             <i class="material-icons">people</i>
@@ -22,6 +6,12 @@
             <span class="badge badge-md"><i class="material-icons fs-12pt">chevron_right</i></span>
         </a>
         <ul class="dropdown-list" style="display:{{ Route::is('user.customer*') ? 'block' : 'none' }}">
+
+            <!-- NAV ITEM -->
+            <li class="nav-item {{ (request()->is('user/dashboard')) ? 'active' : '' }}">
+                <a href="{{route('user.dashboard')}}" class="nav-link"><i class="material-icons">dashboard</i><span class="link-text">{{__('Dashboard')}}</span></a>
+            </li>
+
             <li class="{{ Route::is('user.customer.create') ? 'active' : '' }}">
                 <a href="{{route('user.customer.create')}}" class="nav-link"> <i class="material-icons">chevron_right</i>
                     <span class="link-text">{{__('Add New Customer')}}</span>
@@ -44,10 +34,27 @@
             </li>
         </ul>
     </li>
-    {{-- <li class="nav-item {{ (request()->is('user/money/details')) ? 'active' : '' }}"> --}}
-    {{--     <a href="{{route('user.money.details')}}" class="nav-link"><i class="material-icons">credit_card</i> --}}
-    {{--         <span class="link-text">{{__('Money Details')}} --}}
-    {{--         </span> --}}
-    {{--     </a> --}}
-    {{-- </li> --}}
+
+    <li class="nav-item {{ Route::is('user.sales*') ? 'active' : '' }}">
+        <a href="{{route('user.sales.index')}}" class="nav-link">
+            <i class="material-icons">business_center</i><span class="link-text">{{__('Sales')}}</span>
+        </a>
+    </li>
+    <li class="nav-item {{ Route::is('user.payments*') ? 'active' : '' }}">
+        <a href="{{route('user.payments.index')}}" class="nav-link">
+            <i class="material-icons">payment</i><span class="link-text">{{__('Payments')}}</span>
+        </a>
+    </li>
+
+    <li class="nav-item mt-auto">
+        <form action="{{ route('stop-impersonate') }}" method="POST">
+            @csrf
+            <button class="dropdown-item text-warning nav-link" type="submit" >
+                <i class="material-icons">backspace</i>
+                <span class="link-text">
+                    {{ __("Back to Admin") }}<br>{{ __('Stop Impersonation') }}
+                </span>
+            </button>
+        </form>
+    </li>
 </ul>

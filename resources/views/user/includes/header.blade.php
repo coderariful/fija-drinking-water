@@ -25,7 +25,7 @@
                     <span class="d-sm-inline-block d-none pl-2 pr-1">{{  Auth::user()->name }}</span>
                     <i class="d-sm-inline-block d-none material-icons icon-xs">keyboard_arrow_down</i>
                 </a>
-                <div class="dropdown-menu maxh-120px">
+                <div class="dropdown-menu">
                     <a class="dropdown-item" href="{{route('profile')}}"><i class="material-icons">person</i> {{ __('Update Profile') }}</a>
                     <a class="dropdown-item" href="{{route('profile.password.change')}}"><i class="material-icons">settings</i> {{__('Change Password')}}</a>
                     <div class="dropdown-divider"></div>
@@ -35,6 +35,15 @@
                             @csrf
                         </form>
                     </a>
+                    @if(session()->has('impersonated_by'))
+                        <div class="dropdown-divider"></div>
+                        <form action="{{ route('stop-impersonate') }}" method="POST">
+                            @csrf
+                            <button class="dropdown-item text-warning" type="submit" >
+                                <i class="material-icons">backspace</i>{{ __("Back to Admin") }} - {{ __('Stop Impersonation') }}
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </li>
         </ul>

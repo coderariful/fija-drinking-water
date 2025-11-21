@@ -18,7 +18,7 @@
     </div>
 
 
-    <div class="row">
+    <div class="row dashboard-cards mx-2">
         <div class="col-xl-3 col-sm-6">
             <a href="{{route('user.customer.index')}}">
                 <div class="card card-dark bg-primary">

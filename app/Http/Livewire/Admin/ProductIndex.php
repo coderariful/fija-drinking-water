@@ -33,6 +33,6 @@ class ProductIndex extends Component
             $builder->where('name', 'like', "%$keyword%")
                 ->orWhere('type', 'like', "%$keyword%")
                 ->orWhere('sku', 'like', "%$keyword%");
-        })->latest('id')->paginate(10);
+        })->latest('id')->paginate(RECORDS_PER_PAGE);
     }
 }

@@ -41,7 +41,7 @@ class SellModal extends Component
         'date'         => 'required|date',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->product    = Product::first();
         $this->product_id = $this->product->id;
@@ -50,7 +50,7 @@ class SellModal extends Component
         $this->date       = today()->format('Y-m-d');
     }
 
-    public function loadData(Customer $customer)
+    public function loadData(Customer $customer): void
     {
         $this->customer     = $customer;
         $this->product      = Product::first();
@@ -63,24 +63,24 @@ class SellModal extends Component
         $this->date       = today()->format('Y-m-d');
     }
 
-    public function updatedQuantity()
+    public function updatedQuantity(): void
     {
         $this->total_cost = floatval($this->rate) * intval($this->quantity);
     }
 
-    public function updatedRate()
+    public function updatedRate(): void
     {
         $this->total_cost = floatval($this->rate) * intval($this->quantity);
     }
 
-    public function updatedProductId($value)
+    public function updatedProductId($value): void
     {
         $this->product = Product::find($value);
         $this->rate = ($this->product->type == 'water') ? $this->customer->jar_rate : $this->product->price;
         $this->total_cost = $this->rate * $this->quantity;
     }
 
-    public function submit()
+    public function submit(): void
     {
         $data = $this->validate();
 
@@ -88,7 +88,7 @@ class SellModal extends Component
             $this->date = date('Y-m-d');
         }
 
-        $sale = Transaction::create([
+        Transaction::create([
             'customer_id'  => $this->customer->id,
             'product_id'  => $this->product->id,
             'user_id'      => $this->customer->user_id,

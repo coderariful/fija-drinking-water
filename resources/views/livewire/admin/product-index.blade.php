@@ -51,17 +51,17 @@
                                     <td>{{ $product->price }}</td>
 
                                     <td>
-                                        <a href="{{route('admin.product.edit', $product->id)}}" class="btn btn-sm btn-success btn-circle" title="Edit">
+                                        <a href="{{route('admin.product.edit', $product->id)}}" class="btn btn-sm btn-success" title="Edit">
                                             <i class="material-icons">edit</i>
                                         </a>
                                         @if($product->id !== 1)
-                                        <button type="button" class="btn btn-sm btn-danger btn-circle" title="Delete"
+                                        <button type="button" class="btn btn-sm btn-danger" title="Delete"
                                                 onclick="return confirm('Are you sure, would you like to delete tha user?') || event.stopImmediatePropagation();"
                                                 wire:click.prevent="delete({{$product->id}})">
                                             <i class="material-icons">delete</i>
                                         </button>
                                         @else
-                                            <button type="button" class="btn btn-sm btn-danger btn-circle disabled" title="Delete">
+                                            <button type="button" class="btn btn-sm btn-danger disabled" title="Delete">
                                                 <i class="material-icons">delete</i>
                                             </button>
                                         @endif

@@ -34,39 +34,34 @@ class CustomerIndex extends Component
         ]);
     }
 
-    public function filterDue($val)
+    public function filterDue($val): void
     {
         $this->showDue = $val;
     }
 
     public function getCustomers(): LengthAwarePaginator|array
     {
-        $purchaseWater = ['purchase'=>'whereProductTypeWater'];
+        $t = "customers";
 
         return Customer::query()
-            ->where('user_id', '=', auth()->id())
-            ->where('status', '=', $this->status)
-            ->when($this->keyword, function (Builder $builder, $keyword) {
-                $builder->where('name', 'like', "%$keyword%")
-                    ->orWhere('phone', 'like', "%$keyword%");
+            ->withTransactions()
+            ->where("$t.user_id", '=', auth()->id())
+            ->where("$t.status", '=', $this->status)
+            ->when($this->keyword, function (Builder $builder, $keyword) use ($t) {
+                $builder->where("$t.name", 'like', "%$keyword%")
+                    ->orWhere("$t.phone", 'like', "%$keyword%");
             })
-            ->when($this->start_date, function (Builder $builder, $start_date) {
-                $builder->whereDate('issue_date', '>=', $start_date);
+            ->when($this->start_date, function (Builder $builder, $start_date) use ($t) {
+                $builder->whereDate("$t.issue_date", '>=', $start_date);
             })
-            ->when($this->end_date, function (Builder $builder, $end_date) {
-                $builder->whereDate('issue_date', '<=', $end_date);
+            ->when($this->end_date, function (Builder $builder, $end_date) use ($t) {
+                $builder->whereDate("$t.issue_date", '<=', $end_date);
             })
             ->when($this->showDue, function (Builder $builder) {
-                $query_sum_sales_total_cost = 'ifnull((select sum(sales.total_cost) from sales where customers.id = sales.customer_id),0)';
-                $query_sum_payments_amount = 'ifnull((select sum(payments.amount) from payments where customers.id = payments.customer_id),0)';
-                $builder->where(DB::raw("($query_sum_sales_total_cost - $query_sum_payments_amount)"), '>', 0);
+                $builder->having(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);
             })
-            ->orderBy('status')
+            ->orderBy("$t.status")
             ->with('user')
-            ->withSum('sales', 'total_cost')
-            ->withSum('payments', 'amount')
-            ->withSum($purchaseWater, 'in_quantity')
-            ->withSum($purchaseWater, 'out_quantity')
             ->latest('id')
             ->paginate(RECORDS_PER_PAGE);
     }

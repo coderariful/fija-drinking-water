@@ -72,6 +72,7 @@
                             <th scope="col" class="text-center">{{ __('Rate') }}</th>
                             <th scope="col" class="text-center" nowrap>{{ __('Qty.') }}</th>
                             <th scope="col" class="text-center">{{ __('Total Amount') }}</th>
+                            <th scope="col" class="text-center">{{ __('Paid Amount') }}</th>
                             <th scope="col">{{ __('Note') }}</th>
                         </tr>
                         </thead>
@@ -87,6 +88,7 @@
                                 <td class="py-1 text-center">{{ $sale->rate }}</td>
                                 <td class="py-1 text-center" nowrap>{{ $sale->quantity }}</td>
                                 <td class="py-1 text-center">{{ $sale->total_amount }}</td>
+                                <td class="py-1 text-center">{{ $sale->paid_amount }}</td>
                                 <td class="py-1">{{ str($sale->note??'-')->limit() }}</td>
                             </tr>
                         @empty

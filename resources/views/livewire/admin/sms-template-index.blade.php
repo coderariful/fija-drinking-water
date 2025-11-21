@@ -46,7 +46,7 @@
                                     <td>{{ $template->name}}</td>
                                     <td>{{ str($template->body)->limit() }}</td>
                                     <td>
-                                        <a href="{{route('admin.sms-template.edit', $template->id)}}" class="btn btn-sm btn-success btn-circle" title="Edit">
+                                        <a href="{{route('admin.sms-template.edit', $template->id)}}" class="btn btn-sm btn-success" title="Edit">
                                             <i class="material-icons">edit</i>
                                         </a>
                                     </td>

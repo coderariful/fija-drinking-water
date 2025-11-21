@@ -160,7 +160,7 @@ class SalesIndex extends Component
             })
             ->latest('created_at')
             ->latest('id')
-            ->paginate(50);
+            ->paginate(RECORDS_PER_PAGE);
 
         foreach ($sales as $sale) {
             $this->quantity[$sale->id] = $sale->quantity;

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\CustomersController;
@@ -96,5 +97,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('money/details', [UserController::class, 'moneyDetails'])->name('money.details');
     });
+
+    Route::post('stop-impersonate', [LoginController::class, 'stopImpersonate'])->name('stop-impersonate');
 });
 

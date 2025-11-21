@@ -15,8 +15,10 @@
     <!-- RESPONSIVE BROWSER TO SCREEN WIDTH -->
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
     <!------------------------------------------------------------------------------------------------>
-    <link rel="icon" type="image/png" sizes="16x16"
-          href="{{ !empty($logoFavicon) ? asset($logoFavicon->favicon): asset('backend/assets/img/favicon/favicon.png') }}"/><!-- FAVICON  -->
+    {{--<link rel="icon" type="image/png" sizes="16x16"
+          href="{{ !empty($logoFavicon) ? asset($logoFavicon->favicon): asset('backend/assets/img/favicon/favicon.png') }}"/>--}}
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('backend/assets/img/logo/logo.png') }}"/>
+    <!-- FAVICON  -->
     <link rel="stylesheet" href="{{asset('bootstrap/css/bootstrap.min.css')}}" /><!-- BOOTSTRAP - V 4.0.0 -->
     <link rel="stylesheet" href="{{asset('backend/assets/icons/material-icons/material-icons.css')}}" /><!-- MATERIAL ICONS -->
     <link rel="stylesheet" href="{{asset('backend/assets/icons/font-awesome/font-awesome.min.css')}}" /><!-- FONT AWESOME -->
@@ -119,7 +121,7 @@
 
         <!-- WRAPPER SLIDE ------------------------------------------------------------------------------->
         <div id="wrapper-slide">
-            <button data-toggle="slideUp" data-target="body" class="btn btn-circle btn-danger btn-flash-dark ">
+            <button data-toggle="slideUp" data-target="body" class="btn btn-danger btn-flash-dark ">
                 <i class="material-icons">keyboard_arrow_up</i>
             </button>
         </div>

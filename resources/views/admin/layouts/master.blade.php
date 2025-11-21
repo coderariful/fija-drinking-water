@@ -134,7 +134,7 @@
 
         <!-- WRAPPER SLIDE ------------------------------------------------------------------------------->
         <div id="wrapper-slide">
-            <button data-toggle="slideUp" data-target="body" class="btn btn-circle btn-danger btn-flash-dark ">
+            <button data-toggle="slideUp" data-target="body" class="btn btn-danger btn-flash-dark ">
                 <i class="material-icons">keyboard_arrow_up</i>
             </button>
         </div>

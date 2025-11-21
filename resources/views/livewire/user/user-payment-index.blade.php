@@ -18,7 +18,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <select class="form-control" wire:model.blur="employee_id">
-                                <option value="">Select Employee</option>
+                                <option value="">All Employee</option>
                                 @foreach($employees as $employee)
                                     <option value="{{$employee->id}}">{{$employee->name}}</option>
                                 @endforeach
@@ -26,7 +26,7 @@
                         </div>
                         <div class="col-md-3">
                             <select class="form-control" wire:model.blur="customer_id">
-                                <option value="">Select Customer</option>
+                                <option value="">All Customer</option>
                                 @foreach($customers as $customer)
                                     <option value="{{$customer->id}}">{{$customer->name}}</option>
                                 @endforeach
@@ -77,7 +77,7 @@
                             <th scope="col">{{ __('Employee') }}</th>
                             <th scope="col">{{ __('Customer') }}</th>
                             <th scope="col">{{ __('Phone') }}</th>
-                            <th scope="col" class="text-center">{{ __('Pay Amount') }}</th>
+                            <th scope="col" class="text-center">{{ __('Paid Amount') }}</th>
                             <th scope="col">{{ __('Note') }}</th>
                         </tr>
                         </thead>
@@ -89,13 +89,8 @@
                                 <td class="py-1">{{ $sale->user?->name??'-'}}</td>
                                 <td class="py-1">{{ $sale->customer?->name??'-'}}</td>
                                 <td class="py-1">{{ $sale->customer?->phone??'-' }}</td>
-                                <td class="py-1 text-center">{{ $sale->amount }}</td>
+                                <td class="py-1 text-center">{{ $sale->paid_amount }}</td>
                                 <td class="py-1">{{ str($sale->note??'-')->limit() }}</td>
-                                {{-- <td nowrap> --}}
-                                {{--     <button type="button" class="btn btn-sm btn-info btn-circle" data-toggle="modal" data-target="#exModal">  --}}
-                                {{--         <i class="material-icons">edit</i>  --}}
-                                {{--     </button>  --}}
-                                {{-- </td>  --}}
                             </tr>
                         @empty
                             <tr>
