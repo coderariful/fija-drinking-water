@@ -79,6 +79,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('sms-template/{template}', SmsTemplateEdit::class)->name('sms-template.edit');
 
         Route::get('money/details', [AdminController::class, 'moneyDetails'])->name('money.details');
+
+        // Route::get('migrate/upgrade', [AdminController::class, 'migrateUpgrade']);
     });
 
     Route::prefix('user')->middleware(['user'])->as('user.')->group(function () {

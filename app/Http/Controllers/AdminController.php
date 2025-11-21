@@ -2,17 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use App\Models\GeneralSettings;
-use App\Models\LogoSettings;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
 use Throwable;
 
 class AdminController extends Controller
@@ -28,5 +18,15 @@ class AdminController extends Controller
         } catch (Throwable $th) {
             throw $th;
         }
+    }
+
+    public function migrateUpgrade()
+    {
+        Artisan::call('migrate', ['--force' => true]);
+
+        return [
+            'message' => 'Application upgraded successfully.',
+            'output' => trim(Artisan::output())
+        ];
     }
 }
