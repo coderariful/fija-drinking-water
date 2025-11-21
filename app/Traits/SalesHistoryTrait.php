@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 trait SalesHistoryTrait
 {
+    use CustomerQueryTrait;
+
     protected function showCurrentSalesFilter(): array|string|null
     {
         return match (request('filter')) {
@@ -36,13 +38,16 @@ trait SalesHistoryTrait
     {
         return $user?->sales()
             ->where('product_type', PRODUCT_WATER)
-            ->when(request('month'), fn(Builder $query, $month) => $query->where(DB::raw('MONTH(purchases.created_at)'), $month))
-            ->when(request('year'), fn(Builder $query, $year) => $query->where(DB::raw('YEAR(purchases.created_at)'), $year))
-            ->when(request('date', ['',''])[0], fn(Builder $query, $start_date) => $query->where(DB::raw('DATE(purchases.created_at)'), '>=', $start_date))
-            ->when(request('date', ['',''])[1], fn(Builder $query, $end_date) => $query->where(DB::raw('DATE(purchases.created_at)'), '<=',$end_date))
-            ->when(request('day'), fn (Builder $query, $day) => $query->where(DB::raw('DATE(purchases.created_at)'), '>=', $dates[$day]))
-            ->when(request('customer_id'), fn(Builder $query, $customer_id) => $query->where(DB::raw('customers.id'), $customer_id))
-            ->with(['customer', 'payment', 'sale'])
+            ->when(request('month'), fn(Builder $query, $month) => $query->where(DB::raw('MONTH(created_at)'), $month))
+            ->when(request('year'), fn(Builder $query, $year) => $query->where(DB::raw('YEAR(created_at)'), $year))
+            ->when(request('date', ['',''])[0], fn(Builder $query, $start_date) => $query->where(DB::raw('DATE(created_at)'), '>=', $start_date))
+            ->when(request('date', ['',''])[1], fn(Builder $query, $end_date) => $query->where(DB::raw('DATE(created_at)'), '<=',$end_date))
+            ->when(request('day'), fn (Builder $query, $day) => $query->where(DB::raw('DATE(created_at)'), '>=', $dates[$day]))
+            ->when(request('customer_id'), fn(Builder $query, $customer_id) => $query->where(DB::raw('customer_id'), $customer_id))
+            ->with(['customer'])
+            ->addSelect([
+                'stock_qty' => $this->addSelectStockSubquery(PRODUCT_WATER),
+            ])
             ->get();
     }
 
@@ -63,21 +68,21 @@ trait SalesHistoryTrait
 
         $previous_sales = $user?->sales()
             ->where('product_type', PRODUCT_WATER)
-            ->whereDate('sales.created_at', '<', $date)
-            ->sum('total_cost');
+            ->whereDate('created_at', '<', $date)
+            ->sum('total_amount');
 
-        $previous_payments = $user?->payments()
-            ->whereDate('payments.created_at', '<', $date)
-            ->sum('amount');
+        $previous_payments = $user?->sales()
+            ->whereDate('created_at', '<', $date)
+            ->sum('paid_amount');
 
-        $purchases = $user?->purchases()
-            ->whereDate('purchases.created_at', '<', $date);
+        $purchases = $user?->sales()
+            ->whereDate('created_at', '<', $date);
 
         return (object)[
-            'sales' => round((int)$previous_sales, 2),
-            'payments' => round((int)$previous_payments, 2),
-            'jar_in' => (int)$purchases?->sum('in_quantity'),
-            'jar_out' => (int)$purchases?->sum('out_quantity'),
+            'sales' => round(floatval($previous_sales), 2),
+            'payments' => round(floatval($previous_payments), 2),
+            'jar_in' => floatval($purchases?->sum('in_quantity') ?? 0),
+            'jar_out' => floatval($purchases?->sum('out_quantity') ?? 0),
         ];
     }
 
@@ -91,14 +96,12 @@ trait SalesHistoryTrait
         ];
 
         $histories = $this->getSalesHistories($dates, $user);
-        $saleIds = $histories?->pluck('sale_id') ?? [];
-        $paymentIds = $histories?->pluck('payment_id') ?? [];
 
         $groups = $histories?->groupBy('customer_id') ?? [];
         $previous = $this->getPreviousSalesHistories($dates, $user);
 
-        $total_sell = Transaction::where('user_id', $user?->id)->sum('total_cost');
-        $total_paid = Transaction::where('user_id', $user?->id)->sum('amount');
+        $total_sell = Transaction::where('user_id', $user?->id)->sum('total_amount');
+        $total_paid = Transaction::where('user_id', $user?->id)->sum('paid_amount');
 
         return [
             'groups' => $groups,
@@ -108,8 +111,8 @@ trait SalesHistoryTrait
             'jar_out_previous' => $previous->jar_out,
             'jar_in_count' => $histories?->sum('in_quantity'),
             'jar_out_count' => $histories?->sum('out_quantity'),
-            'sell_amount' => Transaction::whereIn('id', $saleIds)->sum('total_cost'),
-            'collection_amount' => Transaction::whereIn('id', $paymentIds)->sum('amount'),
+            'sell_amount' => $histories->sum('total_amount'),
+            'collection_amount' => $histories->sum('paid_amount'),
             'customer'=> Customer::when(request('customer_id'), fn($q, $id) => $q->where('id', $id))->first(),
             'showCurrentFilter' => $this->showCurrentSalesFilter(),
             'customer_id' => request('customer_id'),

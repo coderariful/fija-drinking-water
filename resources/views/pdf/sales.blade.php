@@ -147,7 +147,7 @@
                             <td class="text-center py-0">{{formatDate($history->created_at, DATE_FORMAT)}}</td>
                             <td class="text-center py-0">{{$history->in_quantity}}</td>
                             <td class="text-center py-0">{{$history->out_quantity}}</td>
-                            <td class="text-center py-0">{{$history->jar_stock}}</td>
+                            <td class="text-center py-0">{{$history->stock_qty}}</td>
                             <td class="text-center py-0">{{round($history->payment?->amount ?? 0, 2)}}</td>
                             <td class="text-center py-0">{{round($history->due_till_date ?? 0, 2)}}</td>
                             <td class="text-center py-0">{{$history->note ?? '-'}}</td>
@@ -159,7 +159,7 @@
                                 <td class="text-center py-0">{{formatDate($history->created_at, DATE_FORMAT)}}</td>
                                 <td class="text-center py-0">{{$history->in_quantity}}</td>
                                 <td class="text-center py-0">{{$history->out_quantity}}</td>
-                                <td class="text-center py-0">{{$history->jar_stock}}</td>
+                                <td class="text-center py-0">{{$history->stock_qty}}</td>
                                 <td class="text-center py-0">{{round($history->payment?->amount ?? 0, 2)}}</td>
                                 <td class="text-center py-0">{{round($history->due_till_date ?? 0, 2)}}</td>
                                 <td class="text-center py-0">{{$history->note ?? '-'}}</td>

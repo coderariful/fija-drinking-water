@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 trait CustomerQueryTrait
 {
@@ -14,8 +15,8 @@ trait CustomerQueryTrait
             ->whereColumn('t2.customer_id', 'transactions.customer_id')
             ->where('t2.product_type', $product_type)
             ->whereColumn('t2.created_at', '<=', 'transactions.created_at')
-            ->orderBy('t2.created_at')
-            ->orderBy('t2.created_at')
+            ->orderBy(DB::raw('TIME(t2.created_at)'))
+            ->orderBy('t2.id')
             ->limit(1);
     }
 }
