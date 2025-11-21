@@ -85,4 +85,10 @@ class Transaction extends Model
     {
         $query->whereHas('customer')->whereHas('user');
     }
+
+    public function scopeCommon(Builder $query)
+    {
+        return static::query()->notObsulate()
+            ->whereIn('user_id', User::all()->pluck('id'));
+    }
 }

@@ -25,8 +25,8 @@
                                     <th scope="col" class="text-center" width="1%" nowrap>{{__('S/N')}}</th>
                                     <th scope="col">{{ __('Name') }}</th>
                                     <th scope="col">{{ __('Phone') }}</th>
-                                    <th scope="col">{{ __('Stock') }}</th>
-                                    <th scope="col">{{ __('Due') }}</th>
+                                    <th scope="col">{{ __('Total Stock') }}</th>
+                                    <th scope="col">{{ __('Total Due') }}</th>
                                     <th scope="col">{{ __('Action') }}</th>
                                 </tr>
                             </thead>

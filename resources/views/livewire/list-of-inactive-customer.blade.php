@@ -95,7 +95,7 @@
                                             wire:click="$dispatchTo('purchase-history-modal', 'open-modal', { customer: {{$customer->id}} })">
                                         <i class="material-icons">assignment</i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-info rounded" title="Send SMS"
+                                    <button type="button" class="btn btn-sm btn-info" title="Send SMS"
                                             data-toggle="modal" data-target="#smsModal"
                                             wire:click="$dispatchTo('admin.sms-modal', 'open-modal', { customer: {{$customer->id}} })">
                                         <i class="material-icons">send</i>
