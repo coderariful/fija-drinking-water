@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'class_namespace' => 'App\\Livewire',
+    'class_namespace' => 'App\\Http\\Livewire',
 
     /*
     |---------------------------------------------------------------------------
@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'layout' => 'components.layouts.app',
+    'layout' => 'layouts.app',
 
     /*
     |---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ return [
     |
     */
 
-    'inject_assets' => true,
+    'inject_assets' => false,
 
     /*
     |---------------------------------------------------------------------------
@@ -127,10 +127,12 @@ return [
     |
     */
 
-    'navigate' => [
-        'show_progress_bar' => true,
-        'progress_bar_color' => '#2299dd',
-    ],
+    // 'navigate' => [
+    //     'show_progress_bar' => true,
+    //     'progress_bar_color' => '#2299dd',
+    // ],
+
+    'navigate' => false,
 
     /*
     |---------------------------------------------------------------------------
@@ -156,5 +158,5 @@ return [
     |
     */
 
-    'pagination_theme' => 'tailwind',
+    'pagination_theme' => 'bootstrap',
 ];

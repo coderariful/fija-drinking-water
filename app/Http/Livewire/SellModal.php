@@ -21,8 +21,8 @@ class SellModal extends Component
     public $rate;
     public $quantity = 1;
     public $out_quantity = 0;
-    public $pay_amount = 0;
-    public $total_cost = 0;
+    public $paid_amount = 0;
+    public $total_amount = 0;
     public $date;
     public $note;
 
@@ -31,53 +31,53 @@ class SellModal extends Component
     ];
 
     protected $rules = [
-        'product_id'   => 'required',
-        'rate'         => 'required|numeric|min:0',
-        'quantity'     => 'required|integer|min:0',
+        'product_id' => 'required',
+        'rate' => 'required|numeric|min:0',
+        'quantity' => 'required|integer|min:0',
         'out_quantity' => 'required|integer|min:0',
-        'total_cost'   => 'required',
-        'note'         => 'nullable',
-        'pay_amount'   => 'nullable',
-        'date'         => 'required|date',
+        'total_amount' => 'required',
+        'note' => 'nullable',
+        'paid_amount'  => 'nullable',
+        'date' => 'required|date',
     ];
 
     public function mount(): void
     {
-        $this->product    = Product::first();
+        $this->product = Product::first();
         $this->product_id = $this->product->id;
-        $this->rate       = $this->product->price;
-        $this->total_cost = floatval($this->rate) * intval($this->quantity);
-        $this->date       = today()->format('Y-m-d');
+        $this->rate = $this->product->price;
+        $this->total_amount = floatval($this->rate) * intval($this->quantity);
+        $this->date = today()->format('Y-m-d');
     }
 
     public function loadData(Customer $customer): void
     {
-        $this->customer     = $customer;
-        $this->product      = Product::first();
-        $this->product_id   = $this->product->id;
-        $this->rate         = $this->customer->jar_rate;
-        $this->quantity     = 1;
+        $this->customer = $customer;
+        $this->product = Product::first();
+        $this->product_id = $this->product->id;
+        $this->rate = $this->customer->jar_rate;
+        $this->quantity = 1;
         $this->out_quantity = 0;
-        $this->pay_amount   = 0;
-        $this->total_cost   = floatval($this->rate) * intval($this->quantity);
-        $this->date       = today()->format('Y-m-d');
+        $this->paid_amount = 0;
+        $this->total_amount = floatval($this->rate) * intval($this->quantity);
+        $this->date = today()->format('Y-m-d');
     }
 
     public function updatedQuantity(): void
     {
-        $this->total_cost = floatval($this->rate) * intval($this->quantity);
+        $this->total_amount = floatval($this->rate) * intval($this->quantity);
     }
 
     public function updatedRate(): void
     {
-        $this->total_cost = floatval($this->rate) * intval($this->quantity);
+        $this->total_amount = floatval($this->rate) * intval($this->quantity);
     }
 
     public function updatedProductId($value): void
     {
         $this->product = Product::find($value);
         $this->rate = ($this->product->type == 'water') ? $this->customer->jar_rate : $this->product->price;
-        $this->total_cost = $this->rate * $this->quantity;
+        $this->total_amount = $this->rate * $this->quantity;
     }
 
     public function submit(): void
@@ -95,8 +95,8 @@ class SellModal extends Component
             'product_type' => $this->product->type,
             'in_quantity'  => $this->quantity,
             'out_quantity' => $this->out_quantity,
-            'total_amount' => $this->total_cost,
-            'paid_amount' => $this->pay_amount,
+            'total_amount' => $this->total_amount,
+            'paid_amount' => $this->paid_amount,
             'rate'         => $this->rate,
             'created_at' => $this->date,
         ] + $data);
@@ -106,8 +106,8 @@ class SellModal extends Component
         $data = [
             '{sale_count}'  => intval($this->quantity),
             '{sale_rate}'   => intval($this->rate),
-            '{bill_amount}' => intval($this->total_cost),
-            '{paid_amount}' => intval($this->pay_amount),
+            '{bill_amount}' => intval($this->total_amount),
+            '{paid_amount}' => intval($this->paid_amount),
             '{due_amount}'  => intval($this->customer->due_amount),
             '{jar_stock}'   => $this->customer->jar_stock,
             '{jar_return}'  => $this->out_quantity,
@@ -118,8 +118,8 @@ class SellModal extends Component
             Product::DISPENSER => $this->sendSms($this->customer, $data, 'dispenser-sms')
         };
 
-        $this->reset(['quantity','note','total_cost', 'pay_amount', 'out_quantity' , 'date']);
-        $this->total_cost = $this->rate * $this->quantity;
+        $this->reset(['quantity','note','total_amount', 'paid_amount', 'out_quantity' , 'date']);
+        $this->total_amount = $this->rate * $this->quantity;
 
         $this->date = today()->format('Y-m-d');
 

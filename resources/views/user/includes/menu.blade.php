@@ -1,4 +1,9 @@
 <ul class="sidebar-nav">
+    <!-- NAV ITEM -->
+    <li class="nav-item {{ (request()->is('user/dashboard')) ? 'active' : '' }}">
+        <a href="{{route('user.dashboard')}}" class="nav-link"><i class="material-icons">dashboard</i><span class="link-text">{{__('Dashboard')}}</span></a>
+    </li>
+
     <li class="nav-item has-dropdown {{ request()->is('user/add/new-customer*') || request()->is('user/all/customers*')  ? 'open' : '' }}">
         <a href="javascript:void(0);" class="nav-link">
             <i class="material-icons">people</i>
@@ -6,11 +11,6 @@
             <span class="badge badge-md"><i class="material-icons fs-12pt">chevron_right</i></span>
         </a>
         <ul class="dropdown-list" style="display:{{ Route::is('user.customer*') ? 'block' : 'none' }}">
-
-            <!-- NAV ITEM -->
-            <li class="nav-item {{ (request()->is('user/dashboard')) ? 'active' : '' }}">
-                <a href="{{route('user.dashboard')}}" class="nav-link"><i class="material-icons">dashboard</i><span class="link-text">{{__('Dashboard')}}</span></a>
-            </li>
 
             <li class="{{ Route::is('user.customer.create') ? 'active' : '' }}">
                 <a href="{{route('user.customer.create')}}" class="nav-link"> <i class="material-icons">chevron_right</i>

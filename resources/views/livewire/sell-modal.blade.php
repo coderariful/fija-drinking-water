@@ -53,18 +53,18 @@
             @enderror
         </div>
         <div class="form-group {{auth_user()->isAdmin()?'col-4':'col-6'}}">
-            <label for="total_cost">Total Amt.</label>
-            <input id="total_cost" type="number" step="any" class="form-control bg-white text-dark"
-                   wire:model="total_cost" min="0" readonly/>
-            @error('total_cost')
+            <label for="total_amount">Total Amt.</label>
+            <input id="total_amount" type="number" step="any" class="form-control bg-white text-dark"
+                   wire:model="total_amount" min="0" readonly/>
+            @error('total_amount')
             <span class="text-danger">{{$message}}</span>
             @enderror
         </div>
         <div class="form-group {{auth_user()->isAdmin()?'col-4':'col-6'}}">
-            <label for="pay_amount">Pay Amount</label>
-            <input id="pay_amount" type="number" step="any" class="form-control bg-white text-dark"
-                   wire:model="pay_amount" min="0"/>
-            @error('pay_amount')
+            <label for="paid_amount">Pay Amount</label>
+            <input id="paid_amount" type="number" step="any" class="form-control bg-white text-dark"
+                   wire:model="paid_amount" min="0"/>
+            @error('paid_amount')
             <span class="text-danger">{{$message}}</span>
             @enderror
         </div>
@@ -96,7 +96,7 @@
                 product_id: @entangle('product_id').live,
                 rate: @entangle('rate').live,
                 quantity: @entangle('quantity').live,
-                total_cost: @entangle('total_cost').live,
+                total_amount: @entangle('total_amount').live,
             }))
         })
     </script>
