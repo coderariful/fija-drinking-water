@@ -118,7 +118,7 @@ class PaymentIndex extends Component
     public function render(): Factory|View|Application
     {
         $payments = Transaction::query()
-            ->notObsulate()
+            ->notObsolete()
             ->with(['customer', 'user'])
             ->where('paid_amount', '>', 0)
             ->when($this->product_id, fn($query, $product_id) => $query->where('product_id', $product_id))

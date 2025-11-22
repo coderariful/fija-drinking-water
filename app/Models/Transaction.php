@@ -71,25 +71,25 @@ class Transaction extends Model
             ->sum('total_amount');
     }
 
-    public function scopeToday(Builder $query)
+    public function scopeToday(Builder $query): void
     {
         $query->whereDate('created_at', today());
     }
 
-    public function scopeThisMonth(Builder $query)
+    public function scopeThisMonth(Builder $query): void
     {
         $query->where(DB::raw('MONTH(created_at)'), today()->month);
     }
 
-    public function scopeNotObsulate(Builder $query)
+    public function scopeNotObsolete(Builder $query): void
     {
         $query->whereHas('customer')->whereHas('user');
     }
 
-    public function scopeCommon(Builder $query)
+    public function scopeCommonQuery(): Builder
     {
         return static::query()
-            ->notObsulate()
+            ->whereIn('customer_id', Customer::select('id'))
             ->whereIn('user_id', User::select('id'));
     }
 }

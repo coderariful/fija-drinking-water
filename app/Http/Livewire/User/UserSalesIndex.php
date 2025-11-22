@@ -73,7 +73,7 @@ class UserSalesIndex extends Component
     {
         return view('livewire.user.user-sales-index', [
             'sales' => Transaction::query()
-                ->notObsulate()
+                ->notObsolete()
                 ->with(['customer', 'product', 'user'])
                 ->where('product_type', PRODUCT_WATER)
                 ->where('user_id', auth()->id())

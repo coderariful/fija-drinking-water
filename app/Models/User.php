@@ -71,7 +71,8 @@ class User extends Authenticatable
     public function scopeWithTransactions(Builder|Customer $query): void
     {
         $query
-            ->leftJoin('transactions as t', 'users.id', '=', 't.user_id')
+            ->leftJoin('customers as c', 'users.id', '=', 'c.user_id')
+            ->leftJoin('transactions as t', 'c.id', '=', 't.customer_id')
             ->select([
                 DB::raw('users.*'),
                 DB::raw('IFNULL(SUM(t.total_amount),0) as total_sales'),

@@ -63,7 +63,7 @@ class UserPaymentIndex extends Component
     {
         return view('livewire.user.user-payment-index', [
             'sales' => Transaction::query()
-                ->notObsulate()
+                ->notObsolete()
                 ->with(['customer', 'user'])
                 ->where('paid_amount', '>', 0)
                 ->where('user_id', auth()->id())

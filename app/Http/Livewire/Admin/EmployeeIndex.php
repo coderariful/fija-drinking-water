@@ -29,7 +29,7 @@ class EmployeeIndex extends Component
                 $query->where('name', 'LIKE', '%'. $keyword .'%')
                     ->orWhere('phone', 'LIKE', '%'. $keyword .'%');
             })
-            // ->havingRaw('exists ( select c.id from customers c where t.customer_id = c.id )')
+            //->havingRaw('exists (select c.id from customers c where t.customer_id = c.id)')
             ->latest('id')
             ->paginate(RECORDS_PER_PAGE);
     }
