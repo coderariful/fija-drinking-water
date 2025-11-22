@@ -17,20 +17,20 @@ trait CustomerListTrait
         $query = Customer::query()
             ->withTransactions()
             ->when(request('keyword'), function (Builder $builder, $keyword) {
-                $builder->where('name', 'like', "%$keyword%")
-                    ->orWhere('phone', 'like', "%$keyword%");
+                $builder->where('customers.name', 'like', "%$keyword%")
+                    ->orWhere('customers.phone', 'like', "%$keyword%");
             })
             ->when(request('start_date'), function (Builder $builder, $start_date) {
-                $builder->whereDate('issue_date', '>=', $start_date);
+                $builder->whereDate('customers.issue_date', '>=', $start_date);
             })
             ->when(request('end_date'), function (Builder $builder, $end_date) {
-                $builder->whereDate('issue_date', '<=', $end_date);
+                $builder->whereDate('customers.issue_date', '<=', $end_date);
             })
             ->when(request('employee_id'), function (Builder $builder, $employee_id) {
-                $builder->where('user_id', '=', $employee_id);
+                $builder->where('customers.user_id', '=', $employee_id);
             })
             ->when(request('day'), function (Builder $builder) {
-                $builder->where(DB::raw('DATE(created_at)'), date('Y-m-d'));
+                $builder->where(DB::raw('DATE(t.created_at)'), date('Y-m-d'));
             })
             ->when($showDue, function (Builder $builder) {
                 // $builder->where(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);

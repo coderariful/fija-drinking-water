@@ -77,7 +77,7 @@ class CustomerIndex extends Component
                 $builder->whereDate('issue_date', '<=', $end_date);
             })
             ->when($this->employee_id, function (Builder $builder, $employee_id) {
-                $builder->where('user_id', '=', $employee_id);
+                $builder->where('customers.user_id', '=', $employee_id);
             })
             ->when(request('day'), function (Builder $builder) {
                 $builder->where(DB::raw('DATE(created_at)'), date('Y-m-d'));

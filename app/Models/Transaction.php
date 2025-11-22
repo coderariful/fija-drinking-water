@@ -88,7 +88,8 @@ class Transaction extends Model
 
     public function scopeCommon(Builder $query)
     {
-        return static::query()->notObsulate()
-            ->whereIn('user_id', User::all()->pluck('id'));
+        return static::query()
+            ->notObsulate()
+            ->whereIn('user_id', User::select('id'));
     }
 }
