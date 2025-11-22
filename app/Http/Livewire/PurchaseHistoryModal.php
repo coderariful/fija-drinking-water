@@ -122,22 +122,8 @@ class PurchaseHistoryModal extends Component
     public function savePaymentUpdate(Transaction $transaction): void
     {
         try {
-            $payment = $transaction->payment;
-            $payment->amount = $this->payment[$transaction->id];
-            $payment->save();
-
-            if ($transaction->payment) {
-            } else {
-                $payment = $transaction->payment()->create([
-                    'amount' => $this->payment[$transaction->id],
-                    'created_at' => $transaction->created_at,
-                    'customer_id' => $transaction->customer_id,
-                    'user_id' => $transaction->customer->user_id,
-                    'note' => $transaction->note,
-                ]);
-
-                $transaction->update(['payment_id' => $payment->id]);
-            }
+            $transaction->paid_amount = $this->payment[$transaction->id];
+            $transaction->save();
 
             flash(trans('History payment entry updated.'));
 
@@ -157,7 +143,7 @@ class PurchaseHistoryModal extends Component
             $this->in_quantity[$history->id] = $history->in_quantity;
             $this->out_quantity[$history->id] = $history->out_quantity;
             $this->date_created[$history->id] = $history->created_at?->format('Y-m-d');
-            $this->payment[$history->id] = round($history->payment?->amount ?? 0, 2);
+            $this->payment[$history->id] = round($history->paid_amount ?? 0, 2);
         }
 
         $printUrl = $this->customer ? route('print.card', [

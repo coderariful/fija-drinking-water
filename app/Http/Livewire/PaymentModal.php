@@ -42,7 +42,7 @@ class PaymentModal extends Component
         $data = [
             'customer_id' => $this->customer->id,
             'user_id'     => auth()->user()->id,
-            'amount' => $this->pay_amount,
+            'paid_amount' => $this->pay_amount,
             'note' => $this->note,
             'created_at' => $this->date,
         ];
@@ -52,11 +52,6 @@ class PaymentModal extends Component
         }
 
         $payment = Transaction::create($data);
-
-        Transaction::create([
-            'customer_id'  => $this->customer->id,
-            'payment_id'   => $payment->id ?? null,
-        ]);
 
         flash("Payment saved");
 

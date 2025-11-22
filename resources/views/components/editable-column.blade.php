@@ -5,15 +5,19 @@
     $inputStyle = $inputStyle??[];
     $inputStyle = [
         'width:110px' => $inputType=='date',
-        'width:45px' => $inputType=='number',
+        'width:50px' => $inputType=='number',
         'width:70px' => !in_array($inputType, ['date', 'number']),
+        'height:auto!important',
+        'line-height:initial!important',
         'font-size:14px',
         'padding:0'
     ] + $inputStyle;
     $inputClass = [
         'text-center' => $inputType=='number',
+        'number-input' => $inputType=='number',
         'form-control-sm',
         'border',
+        'py-0',
     ];
 @endphp
 

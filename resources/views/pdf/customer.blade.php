@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="{{asset('backend/assets/css/style.css')}}">
     <style>
         @page {
-            margin: 10px;
-            padding: 20px;
+            margin: 20px;
+            padding: 10px;
         }
         @media print {
             @page {
