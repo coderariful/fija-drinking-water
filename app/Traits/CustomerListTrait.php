@@ -75,9 +75,7 @@ trait CustomerListTrait
                 ->whereDoesntHave('sales', function (Builder $builder) {
                     $builder->whereDate('created_at', '>', today()->subDays(7));
                 })
-                ->with([
-                    'user',
-                ])
+                ->with(['user'])
                 //->orderBy('status')
                 ->latest(DB::raw('IFNULL(SUM(t.total_amount), 0) - IFNULL(SUM(t.paid_amount), 0)'))
                 ->oldest(DB::raw('MAX(t.created_at)'))

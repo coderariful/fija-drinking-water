@@ -45,15 +45,7 @@ class CustomerIndex extends Component
 
     public function render(): Factory|View|Application
     {
-        $printUrl = route('print.customer-list', [
-            'status' => $this->status,
-            'keyword' => $this->keyword,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-            'employee_id' => $this->employee_id,
-            'showDue' => $this->showDue,
-            'view' => 'on',
-        ]);
+        $printUrl = route('print.customer-list');
 
         return view('livewire.admin.customer-index', [
             'customers' => $this->getCustomers(),

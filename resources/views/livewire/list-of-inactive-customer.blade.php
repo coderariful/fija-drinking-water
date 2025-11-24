@@ -3,7 +3,7 @@
         <div class="card card-dark bg-dark">
             <div class="card-header d-block">
                 <form action="{{ $printUrl }}" onsubmit="return confirm('Are you sure to print?')" target="_blank">
-                    <input type="hidden" name="view" value="on">
+                    {{--<input type="hidden" name="view" value="on">--}}
                     <div class="row">
                         <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
                             <h6 class="card-title">{{$title}}</h6>

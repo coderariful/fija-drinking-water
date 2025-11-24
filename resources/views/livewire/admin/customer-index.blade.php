@@ -3,7 +3,7 @@
         <div class="card card-dark bg-dark">
             <div class="card-header d-block">
                 <form action="{{route('print.customer-list')}}" @submit.prevent="const urlParams=new URLSearchParams(new FormData($el)).toString();window.open(`${$el.action}?${urlParams}`,'_blank')">
-                    <input type="hidden" name="view" value="on">
+                    {{--<input type="hidden" name="view" value="on">--}}
                     <input type="hidden" name="showDue" value="{{$showDue ? 'true' : 'false'}}">
                     <div class="row">
                         <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">

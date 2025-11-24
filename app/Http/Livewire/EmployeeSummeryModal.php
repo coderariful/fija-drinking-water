@@ -114,8 +114,6 @@ class EmployeeSummeryModal extends Component
             </div>';
         }
 
-        $dates = $this->getDatesForFilter();
-
         $histories = $this->getHistories();
 
         $groups = $histories?->groupBy('customer_id') ?? [];
