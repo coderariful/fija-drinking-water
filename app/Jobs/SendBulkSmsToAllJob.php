@@ -35,16 +35,15 @@ class SendBulkSmsToAllJob implements ShouldQueue
             ->where('type', 'group-chunk-sms')
             ->pluck('customer_id');
 
-        $query_sum_sales_total_cost = 'ifnull((select sum(sales.total_cost) from sales where customers.id = sales.customer_id),0)';
-        $query_sum_payments_amount = 'ifnull((select sum(payments.amount) from payments where customers.id = payments.customer_id),0)';
+        // $query_sum_sales_total_cost = 'IFNULL((SELECT sum(sales.total_cost) FROM sales WHERE customers.id = sales.customer_id),0)';
+        // $query_sum_payments_amount = 'IFNULL((SELECT sum(payments.amount) FROM payments WHERE customers.id = payments.customer_id),0)';
 
         $this->customers = Customer::query()
-            ->where(DB::raw("($query_sum_sales_total_cost - $query_sum_payments_amount)"), '>', 0)
+            ->withTransactions()
+            // ->where(DB::raw("($query_sum_sales_total_cost - $query_sum_payments_amount)"), '>', 0)
             ->where('send_sms', 1)
             ->where('status', CUSTOMER_APPROVED)
             ->whereNotIn('id', $alreadySent)
-            ->withSum('sales', 'total_cost')
-            ->withSum('payments', 'amount')
             ->oldest()
             ->get();
 
@@ -71,7 +70,7 @@ class SendBulkSmsToAllJob implements ShouldQueue
                             'mobile' =>  $customer->phone,
                             'sms' => $message
                         ]);
-                        
+
                         $history = SMS::saveInHistory($customer->id, $customer->phone, $message, 'bulk:due-sms');
                         SmsSendBulk::create([
                             'group_id' => $this->groupId,
@@ -80,7 +79,6 @@ class SendBulkSmsToAllJob implements ShouldQueue
                             'type' => 'group-chunk-sms',
                         ]);
                     }
-
                 }
             }
 

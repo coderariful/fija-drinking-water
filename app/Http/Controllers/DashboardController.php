@@ -4,11 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Product;
+use App\Models\SmsHistory;
+use App\Models\SmsSendBulk;
 use App\Models\Transaction;
 use App\Models\User;
 
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->deleteOldSmsLogs();
+    }
+
     public function dashboard()
     {
         //$jar_stock = Purchase::where('product_type', Product::WATER)->selectRaw('SUM(in_quantity) as in_qty, SUM(out_quantity) as out_qty')->first();
@@ -68,5 +77,17 @@ class DashboardController extends Controller
             'lastDayOfMonth' =>  today()->lastOfMonth()->format('Y-m-d'),
             'today' => today()->format('Y-m-d'),
         ]);
+    }
+
+    private function deleteOldSmsLogs(): void
+    {
+        $smsHistoryQuery = SmsHistory::whereDate('created_at', '<', today()->subDays(30));
+        $bulkSmsQuery = SmsSendBulk::whereDate('created_at', '<', today()->subDays(30));
+        if ($bulkSmsQuery->count() > 0) {
+            $bulkSmsQuery->delete();
+        }
+        if ($smsHistoryQuery->count() > 0) {
+            $smsHistoryQuery->delete();
+        }
     }
 }

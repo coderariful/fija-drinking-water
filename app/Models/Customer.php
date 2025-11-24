@@ -80,6 +80,16 @@ class Customer extends Model
         return collect($items);
     }
 
+    public function getJarStock()
+    {
+        return $this->getJarStockAttribute();
+    }
+
+    public function getDueAmount(): float
+    {
+        return $this->getDueAmountAttribute();
+    }
+
     public function getJarStockAttribute()
     {
         $attributes = $this->getAttributes();

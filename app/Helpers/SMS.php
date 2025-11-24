@@ -36,14 +36,8 @@ class SMS
 
     public static function getParameters(Customer $customer, string $templateName): array
     {
-        if ($templateName === 'customer-daily-sms') {
-            $params = [
-                "{customer_name}"  => $customer->name,
-                "{customer_phone}" => $customer->phone,
-            ];
-        }
-        if ($templateName === 'customer-daily-sms') {
-            $params = [
+        $params = match ($templateName) {
+            'customer-daily-sms' => [
                 "{bill_amount}" => (int) $customer->sales()->whereDate('created_at', today())->sum('total_amount'),
                 "{paid_amount}" => (int) $customer->sales()->whereDate('created_at', today())->sum('paid_amount'),
                 "{due_amount}"  => intval($customer->getDueAmount()),
@@ -51,21 +45,22 @@ class SMS
                 "{jar_return}"  => (int) $customer->sales()->whereDate('created_at', today())->sum('out_quantity'),
                 "{jar_count}"   => (int) $customer->sales()->whereDate('created_at', today())->sum('in_quantity'),
                 "{jar_rate}"    => (int) $customer->sales()->whereDate('created_at', today())->latest('id')->first()?->rate,
-            ];
-        }
-        if ($templateName === 'due-sms') {
-            $params = [
-                "{due_amount}"  => intval($customer->getDueAmount()),
-            ];
-        }
-        if ($templateName === 'customer-monthly-sms') {
-            $params = [
+            ],
+            'customer-monthly-sms' => [
                 "{month_name}"   => banglaMonth(today()->monthName),
                 "{due_amount}"   => intval($customer->getDueAmount()),
                 "{bkash_number}" => config('sms.bkash_number'),
-            ];
-        }
-        return $params ?? [];
+            ],
+            'due-sms' => [
+                "{due_amount}"  => intval($customer->getDueAmount()),
+            ],
+            default => [],
+        };
+
+        return [
+            "{customer_name}"  => $customer->name,
+            ...$params,
+        ];
     }
 
     public function send(string|int $phone_number, bool|string $mask = null)
@@ -103,13 +98,14 @@ class SMS
     {
         $smsMask = is_string($mask) ? $mask : ($mask ? $this->smsMask : 'Non-Masking');
 
+        $bulkData = $data ?? $this->bulkSmsData;
+
         if (config('sms.enabled')) {
             // if (config('sms.sandbox')) {
             //     $phone_number = config('sms.test_number');
             //     $message ="Recipient: $phone_number\n\n$this->message";
             // }
 
-            $bulkData = $data ?? $this->bulkSmsData;
             $data = json_encode($bulkData);
 
             $requestBody = [
@@ -124,6 +120,10 @@ class SMS
 
             return json_decode($response);
         }
+
+        $countSms = count($bulkData);
+        $this->message = "Total SMS to be sent: $countSms";
+        $this->send(config('sms.test_number'), mask: true);
 
         File::append(base_path('sms.log'), "\n\nRecipient: Bulk SMS\nFrom: $smsMask\nDATA:\n" . json_encode($data));
 

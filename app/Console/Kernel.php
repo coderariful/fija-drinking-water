@@ -21,14 +21,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        // $schedule->call([CronSMS::class, 'dailySMS']);//->dailyAt("12:00");
 
-        $schedule->call(function () {
-            CronSMS::dailySMS();
-        });//->dailyAt("12:00");
-
-        $schedule->call(function () {
-            CronSMS::monthlySMS();
-        })->lastDayOfMonth("12:00");
+        $schedule->call([CronSMS::class, 'monthlySMS'])->lastDayOfMonth("12:00");
     }
 
     /**
