@@ -64,7 +64,7 @@
                     <tr>
                         <td class="text-center pt-0">{{$loop->iteration}}</td>
                         <td class="text-center pt-0" nowrap>{{formatDate($customer->created_at, PRINT_DATE_FORMAT)}}</td>
-                        <td class="pt-0">{{$customer->user->name}}</td>
+                        <td class="pt-0" nowrap>{{$customer->user->name}}</td>
                         <td class="pt-0">{{$customer->name}}</td>
                         <td class="pt-0">{{$customer->phone}}</td>
                         <td class="pt-0">{{$customer->address}}</td>

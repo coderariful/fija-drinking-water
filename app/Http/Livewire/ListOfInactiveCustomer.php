@@ -2,8 +2,11 @@
 
 namespace App\Http\Livewire;
 
+use App\Jobs\SendBulkSmsToAllJob;
+use App\Jobs\SendBulkSmsToInactiveCustomerJob;
 use App\Models\Customer;
 use App\Models\User;
+use App\Traits\InactiveCustomerTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\Factory;
@@ -17,7 +20,7 @@ use Livewire\WithPagination;
 
 class ListOfInactiveCustomer extends Component
 {
-    use WithPagination;
+    use WithPagination, InactiveCustomerTrait;
 
     public $title = 'List Of Inactive Customer';
     public $status;
@@ -69,9 +72,7 @@ class ListOfInactiveCustomer extends Component
             ->whereDoesntHave('sales', function (Builder $builder) {
                 $builder->whereDate('created_at', '>', today()->subDays(7));
             })
-            ->with([
-                'user',
-            ])
+            ->with(['user'])
             //->orderBy('status')
             ->latest(DB::raw('IFNULL(SUM(t.total_amount), 0) - IFNULL(SUM(t.paid_amount), 0)'))
             ->oldest(DB::raw('MAX(t.created_at)'))
@@ -88,5 +89,12 @@ class ListOfInactiveCustomer extends Component
     public function getEmployees(): Collection|array
     {
         return User::all();
+    }
+
+    function sendToAll(): void
+    {
+        dispatch(new SendBulkSmsToInactiveCustomerJob());
+
+        flash('SMS sent to all inactive customers');
     }
 }

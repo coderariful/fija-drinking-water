@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\ProfileController;
@@ -80,7 +81,12 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('money/details', [AdminController::class, 'moneyDetails'])->name('money.details');
 
+
         Route::get('migrate/upgrade', [AdminController::class, 'migrateUpgrade']);
+    });
+
+    Route::middleware(['admin'])->group(function () {
+        Route::get('export/customer-phone-number', [ExportController::class, 'exportCustomerPhoneNumber'])->name('export.customer-phone-numbers');
     });
 
     Route::prefix('user')->middleware(['user'])->as('user.')->group(function () {

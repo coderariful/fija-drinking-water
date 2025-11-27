@@ -53,7 +53,13 @@ class SmsModal extends Component
                 return;
             }
 
-            flash("Message sent failed.");
+            //dd($response);
+
+            if ($response->message) {
+                flash($response->message, 'info');
+            }
+
+            flash("Message sent failed.", 'error');
         }
     }
 

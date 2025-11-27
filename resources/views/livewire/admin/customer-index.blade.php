@@ -1,27 +1,40 @@
-<div class="row" x-data="{}">
+<div class="row" x-data="{
+    exportPhoneNumber() {
+       if(confirm('Are you sure you want to export all customer phone numbers?')){
+            window.open(`{{ route('export.customer-phone-numbers') }}`, '_blank');
+       }
+    }
+}">
     <div class="col-12">
         <div class="card card-dark bg-dark">
             <div class="card-header d-block">
-                <form action="{{route('print.customer-list')}}" @submit.prevent="const urlParams=new URLSearchParams(new FormData($el)).toString();window.open(`${$el.action}?${urlParams}`,'_blank')">
-                    {{--<input type="hidden" name="view" value="on">--}}
-                    <input type="hidden" name="showDue" value="{{$showDue ? 'true' : 'false'}}">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
-                            <h6 class="card-title">{{$title}}</h6>
-                            <button type="button" class="btn btn-danger" onclick="return confirm('{{trans('Are you sure?')}}') || event.stopImmediatePropagation()" wire:click.prevent="sendToAll">{{trans('Send SMS to All')}}</button>
+                <div class="d-flex align-items-center flex-wrap">
+                    <h6 class="card-title">{{$title}}</h6>
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-danger" onclick="return confirm('{{trans('Are you sure? You want to send SMS to all!')}}') || event.stopImmediatePropagation()" wire:click.prevent="sendToAll">{{trans('Send SMS to All')}}</button>
+                        <button type="button" class="btn btn-default" x-on:click="exportPhoneNumber"> Export Phone Number </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body position-relative">
+                <div class="px-3 pb-3">
+                    <form action="{{route('print.customer-list')}}" @submit.prevent="const urlParams=new URLSearchParams(new FormData($el)).toString();window.open(`${$el.action}?${urlParams}`,'_blank')">
+                        @if(!$employee_id)
+                        <input type="hidden" name="view" value="on">
+                        @endif
+                        <input type="hidden" name="showDue" value="{{$showDue ? 'true' : 'false'}}">
+                        <div class="d-flex justify-content-end flex-wrap flex-md-nowrap">
                             @if($showDue)
-                            <button type="button" class="btn btn-primary" wire:click="filterDue(false)">{{trans('Show All')}}</button>
+                                <button type="button" class="btn btn-primary" wire:click="filterDue(false)">{{trans('Show All')}}</button>
                             @else
-                            <button type="button" class="btn btn-primary" wire:click="filterDue(true)">{{trans('Show Due')}}</button>
+                                <button type="button" class="btn btn-primary" wire:click="filterDue(true)">{{trans('Show Due')}}</button>
                             @endif
-                            <select class="form-control w-25" wire:model.live="employee_id" name="employee_id">
+                            <select class="form-control w-25 mr-2" wire:model.live="employee_id" name="employee_id">
                                 <option value="">All</option>
                                 @foreach($employees as $employee)
                                     <option value="{{$employee->id}}">{{$employee->name}}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="col-md-6 col-sm-12">
                             <div class="input-group row">
                                 <input type="date" class="form-control w-25" wire:model.live="start_date" name="start_date">
                                 <input type="date" class="form-control w-25" wire:model.live="end_date" name="end_date">
@@ -29,10 +42,8 @@
                                 <button class="ml-1 btn btn-success">Print</button>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="card-body position-relative">
+                    </form>
+                </div>
                 <div class="position-absolute w-100 h-100 pt-5" wire:loading
                      style="z-index: 99999; top: 0; left: 0; background: rgba(0, 0, 0, .5); backdrop-filter: blur(2px)">
                     <div class="py-4 text-center bg-light-blue my-5">

@@ -7,7 +7,7 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
                             <h6 class="card-title">{{$title}}</h6>
-                            {{-- <button type="button" class="btn btn-danger" onclick="return confirm('{{trans('Are you sure?')}}') || event.stopImmediatePropagation()" wire:click="sendToAll">{{trans('Send SMS to All')}}</button> --}}
+                            <button type="button" class="btn btn-danger" onclick="return confirm('{{trans("Are you sure? You want to send SMS to all inactive customer!")}}') || event.stopImmediatePropagation()" wire:click.prevent="sendToAll">{{trans('Send SMS to All')}}</button>
                             @if(auth_user()->user_type==0)
                             <select class="form-control w-25" wire:model.live="employee_id" name="employee_id">
                                 <option value="">All</option>

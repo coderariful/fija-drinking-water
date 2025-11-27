@@ -142,8 +142,7 @@ class Customer extends Model
 
     public function scopeWithTransactions(Builder|Customer $query): void
     {
-        $query
-            ->leftJoin('transactions as t', 'customers.id', '=', 't.customer_id')
+        $query->leftJoin('transactions as t', 'customers.id', '=', 't.customer_id')
             ->select([
                 DB::raw('customers.*'),
                 DB::raw('IFNULL(SUM(t.total_amount),0) as total_sales'),

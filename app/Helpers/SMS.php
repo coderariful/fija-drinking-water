@@ -51,6 +51,10 @@ class SMS
                 "{due_amount}"   => intval($customer->getDueAmount()),
                 "{bkash_number}" => config('sms.bkash_number'),
             ],
+            'inactive-customer-sms' => [
+                "{due_amount}"  => intval($customer->getDueAmount()),
+                "{jar_stock}"   => intval($customer->getJarStock()),
+            ],
             'due-sms' => [
                 "{due_amount}"  => intval($customer->getDueAmount()),
             ],
@@ -98,9 +102,11 @@ class SMS
     {
         $smsMask = is_string($mask) ? $mask : ($mask ? $this->smsMask : 'Non-Masking');
 
+        //dd($data);
+
         $bulkData = $data ?? $this->bulkSmsData;
 
-        if (config('sms.enabled')) {
+        if (config('sms.enabled') && !config('sms.sandbox')) {
             // if (config('sms.sandbox')) {
             //     $phone_number = config('sms.test_number');
             //     $message ="Recipient: $phone_number\n\n$this->message";
@@ -120,6 +126,8 @@ class SMS
 
             return json_decode($response);
         }
+
+        //dd($bulkData);
 
         $countSms = count($bulkData);
         $this->message = "Total SMS to be sent: $countSms";
