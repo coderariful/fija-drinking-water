@@ -47,6 +47,7 @@ trait SalesHistoryTrait
             ->with(['customer'])
             ->addSelect([
                 'stock_qty' => $this->addSelectStockSubquery(PRODUCT_WATER),
+                'due_till_date' => $this->addSelectDueTillDateSubquery(),
             ])
             ->get();
     }

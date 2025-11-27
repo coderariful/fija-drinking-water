@@ -89,5 +89,15 @@ class SmsTemplateSeeder extends Seeder
                 "{due_amount}"  => "Due Amount",
             ]
         ]);
+
+
+        SmsTemplate::firstOrCreate(['template' => 'inactive-customer-sms'], [
+            'name' => 'Inactive Customer SMS',
+            'body' => 'প্রিয় গ্রাহক, আপনার বকেয়া {due_amount}Tk এবং জার স্টক {jar_stock}।',
+            'params' => [
+                "{due_amount}"  => "Due Amount",
+                "{jar_stock}"   => "Jar Stock",
+            ]
+        ]);
     }
 }

@@ -80,7 +80,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('money/details', [AdminController::class, 'moneyDetails'])->name('money.details');
 
-        // Route::get('migrate/upgrade', [AdminController::class, 'migrateUpgrade']);
+        Route::get('migrate/upgrade', [AdminController::class, 'migrateUpgrade']);
     });
 
     Route::prefix('user')->middleware(['user'])->as('user.')->group(function () {

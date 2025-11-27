@@ -47,6 +47,8 @@ class PrintController extends Controller
         $data = $this->getSalesData($user);
 
         if (request('view') == 'on') {
+            $data['download_pdf'] = request()->fullUrlWithoutQuery('view');
+
             return view('pdf.sales', $data);
         }
 

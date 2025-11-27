@@ -93,7 +93,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td class="py-3 text-center" colspan="11">{{trans('No customer found')}}</td>
+                                <td class="py-3 text-center" colspan="11">{{trans('No edit request found')}}</td>
                             </tr>
                         @endforelse
                         </tbody>

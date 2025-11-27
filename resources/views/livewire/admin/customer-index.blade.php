@@ -105,7 +105,9 @@
                                     <a href="{{route('admin.customer.edit',$customer->id)}}" class="btn btn-sm btn-success" title="Edit" data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">edit</i>
                                     </a>
-                                    <button type="submit" class="btn btn-sm btn-danger" form="delete-{{$customer->id}}" title="Delete" onclick="return confirm('Are you sure, would you like to delete tha user?');" data-bs-toggle="tooltip" data-placement="top">
+                                    <button type="submit" class="btn btn-sm btn-danger" form="delete-{{$customer->id}}" title="Delete"
+                                            onclick="return confirm('Are you sure, would you like to delete tha customer?\nIt will delete all sale data for the particular customer.');"
+                                            data-bs-toggle="tooltip" data-placement="top">
                                         <i class="material-icons">delete</i>
                                     </button>
                                     <form action="{{route('admin.customer.destroy',$customer->id)}}" method="POST" id="delete-{{$customer->id}}"> @csrf @method('DELETE') </form>

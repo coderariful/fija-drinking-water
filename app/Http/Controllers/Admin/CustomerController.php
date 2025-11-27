@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Traits\CustomerTrait;
 use App\Traits\SendSmsTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
 
@@ -132,8 +133,8 @@ class CustomerController extends Controller
 
             return redirect()->route('admin.customer.index')->with('success', 'Customer updated successfully.');
         } catch (Throwable $th) {
-            throw $th;
             flash($th->getMessage(), 'error');
+            //throw $th;
             return $this->backWithError($th->getMessage());
         }
     }
@@ -141,10 +142,18 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         try {
-            $customer->delete();
+            DB::beginTransaction();
+
+            $customer->editRequest()->forceDelete();
+            $customer->sales()->forceDelete();
+            $customer->forceDelete();
+
+            DB::commit();
 
             return back()->with('success', 'Customer deleted successfully.');
         } catch (Throwable $th) {
+            DB::rollBack();
+
             return $this->backWithError($th->getMessage());
         }
     }

@@ -88,8 +88,10 @@ class Transaction extends Model
 
     public function scopeCommonQuery(): Builder
     {
-        return static::query()
+        return static::query();
+
+        /*return static::query()
             ->whereIn('customer_id', Customer::select('id'))
-            ->whereIn('user_id', User::select('id'));
+            ->whereIn('user_id', User::select('id'));*/
     }
 }

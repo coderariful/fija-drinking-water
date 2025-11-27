@@ -19,4 +19,15 @@ trait CustomerQueryTrait
             ->orderBy('t2.id')
             ->limit(1);
     }
+
+    private function addSelectDueTillDateSubquery(): Builder|Transaction
+    {
+        return Transaction::from('transactions as t2')
+            ->selectRaw('IFNULL(SUM(t2.total_amount),0)-IFNULL(SUM(t2.paid_amount),0) AS due_till_date')
+            ->whereColumn('t2.customer_id', 'transactions.customer_id')
+            ->whereColumn('t2.created_at', '<=', 'transactions.created_at')
+            ->orderBy(DB::raw('TIME(t2.created_at)'))
+            ->orderBy('t2.id')
+            ->limit(1);
+    }
 }

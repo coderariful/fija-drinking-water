@@ -61,6 +61,11 @@ class Customer extends Model
         return $this->hasMany(Transaction::class,'customer_id');
     }
 
+    public function editRequest()
+    {
+        return $this->hasMany(CustomerHistory::class,'customer_id','id')->latest();
+    }
+
     public function dispenserUnique(): array
     {
         $productIds = $this->sales()->where('product_type', Product::DISPENSER)->pluck('product_id');

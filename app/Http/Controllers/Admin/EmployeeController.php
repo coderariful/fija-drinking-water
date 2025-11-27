@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
@@ -88,17 +91,27 @@ class EmployeeController extends Controller
     public function destroy(User $employee)
     {
         try {
+            DB::beginTransaction();
+
             $image_path = public_path("upload/profilePhoto/" . $employee->profile_photo_path);
+
+            $customerIds = $employee->customer()->select('id');
+
+            Transaction::whereIn('customer_id', $customerIds)->forceDelete();
+            Customer::where('user_id', $employee->id)->forceDelete();
+            $employee->forceDelete();
+
+            DB::commit();
 
             if (File::exists($image_path)) {
                 //File::delete($image_path);
                 @unlink($image_path);
             }
 
-            $employee->delete();
-
             return $this->backWithSuccess("Employee delete successful");
         } catch (Throwable $th) {
+            DB::rollBack();
+
             return $this->backWithError($th->getMessage());
         }
     }

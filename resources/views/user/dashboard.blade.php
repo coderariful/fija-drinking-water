@@ -107,7 +107,7 @@
                     <i class="display-2 material-icons">people</i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Due Today') }}</span>
-                        <h3 class="card-title font-montserrat mb-0">{{ roundFormat($total_due_today) }}</h3>
+                        <h3 class="card-title font-montserrat mb-0">{{ $total_due_today }}</h3>
                     </div>
                 </div>
             </div>

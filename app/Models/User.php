@@ -70,17 +70,16 @@ class User extends Authenticatable
 
     public function scopeWithTransactions(Builder|Customer $query): void
     {
-        $query
-            ->leftJoin('customers as c', 'users.id', '=', 'c.user_id')
+        $query->leftJoin('customers as c', 'users.id', '=', 'c.user_id')
             ->leftJoin('transactions as t', 'c.id', '=', 't.customer_id')
             ->select([
                 DB::raw('users.*'),
                 DB::raw('IFNULL(SUM(t.total_amount),0) as total_sales'),
                 DB::raw('IFNULL(SUM(t.paid_amount),0) as total_paid'),
-                DB::raw('IFNULL(SUM(t.in_quantity),0) as total_in_qty'),
-                DB::raw('IFNULL(SUM(t.out_quantity),0) as total_out_qty'),
+                DB::raw("IFNULL(SUM(CASE WHEN t.product_type = 'water' THEN t.in_quantity ELSE 0 END),0) as total_in_qty"),
+                DB::raw("IFNULL(SUM(CASE WHEN t.product_type = 'water' THEN t.out_quantity ELSE 0 END),0) as total_out_qty"),
                 DB::raw('IFNULL(SUM(t.total_amount), 0) - IFNULL(SUM(t.paid_amount), 0) as due_amount'),
-                DB::raw('IFNULL(SUM(t.in_quantity), 0) - IFNULL(SUM(t.out_quantity), 0) as jar_stock'),
+                DB::raw("IFNULL(SUM(CASE WHEN t.product_type = 'water' THEN t.in_quantity ELSE 0 END), 0) - IFNULL(SUM(CASE WHEN t.product_type = 'water' THEN t.out_quantity ELSE 0 END), 0) as jar_stock"),
             ])
             ->groupBy('users.id');
     }

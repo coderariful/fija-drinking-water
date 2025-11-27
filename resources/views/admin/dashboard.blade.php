@@ -125,7 +125,7 @@
                     <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Due Today') }}</span>
-                        <h3 class="card-title font-montserrat mb-0">{{ roundFormat($total_due_today) }}</h3>
+                        <h3 class="card-title font-montserrat mb-0">{{ $total_due_today }}</h3>
                     </div>
                 </div>
             </div>
@@ -209,12 +209,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between pt-1 pb-3">
                     <div>
-                        <span class="card-title mb-0 text-capitalize ml-2">{{ __('Last 12 Month Statement') }}</span>
-                    </div>
-
-                    <div class="d-flex align-items-center">
-                        <span class="badge badge-legend badge-danger ml-2"></span>
-                        <span class="card-title  mb-0 text-capitalize ml-2">{{ __('Customer Increase') }}</span>
+                        <span class="card-title mb-0 text-capitalize ml-2">{{ __('Last 29 Days Statement') }}</span>
                     </div>
                 </div>
                 <canvas class="maxh-310px" data-style="dark" id="chart-line-activity"></canvas>

@@ -50,6 +50,7 @@ class CustomerEditRequest extends Component
     public function getCustomers(): LengthAwarePaginator|array
     {
         return CustomerHistory::query()
+            ->has('original')
             ->when($this->keyword, function (Builder $builder, $keyword) {
                 $builder->where('name', 'like', "%$keyword%")
                     ->orWhere('phone', 'like', "%$keyword%");

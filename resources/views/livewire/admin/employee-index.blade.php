@@ -32,13 +32,21 @@
                             </thead>
                             <tbody>
                                 @php
-                                $total_stock = 0;
-                                $total_due = 0;
+                                    $total_stock = 0;
+                                    $total_due = 0;
                                 @endphp
                                 @foreach($users as $user)
                                     @php
-                                    $total_stock += $user->jar_stock ?? 0;
-                                    $total_due += $user->due_amount ?? 0;
+                                        $total_stock += $user->jar_stock ?? 0;
+                                        $total_due += $user->due_amount ?? 0;
+                                        /* $jar_stock = DB::table('transactions')
+                                            ->where('product_type', \App\Models\Product::WATER)
+                                            ->select([
+                                                DB::raw("IFNULL(SUM(in_quantity) - SUM(out_quantity), 0) as total_stock"),
+                                                DB::raw("SUM(in_quantity) as in_qty"),
+                                                DB::raw("SUM(out_quantity) as out_qty"),
+                                            ])
+                                            ->first(); */
                                     @endphp
                                     <tr>
                                         <th class="text-center" width="1%">{{ paginationIndex($users, $loop->iteration) }}
@@ -56,8 +64,8 @@
 
                                             @if($user->id != auth()->id())
                                                 <button type="button" class="btn btn-sm btn-info" title="Login As"
-                                                        wire:click.prevent="$call('impersonate', { user: {{$user->id}} })"
-                                                        data-toggle="tooltip" data-placement="top">
+                                                    wire:click.prevent="$call('impersonate', { user: {{$user->id}} })"
+                                                    data-toggle="tooltip" data-placement="top">
                                                     <i class="material-icons">assignment_ind</i>
                                                 </button>
                                             @else
@@ -66,15 +74,14 @@
                                                 </button>
                                             @endif
 
-                                            @if($user->user_type!=USER_ADMIN)
+                                            @if($user->user_type != USER_ADMIN)
                                                 <a href="{{route('admin.employee.edit', $user->id)}}"
-                                                   class="btn btn-info btn-sm" title="Edit"
-                                                   onclick="return confirm('Are you sure, would you like to edit the user?');">
+                                                    class="btn btn-info btn-sm" title="Edit"
+                                                    onclick="return confirm('Are you sure, would you like to edit the user?');">
                                                     <i class="material-icons">edit</i>
                                                 </a>
-                                                <button class="btn btn-danger btn-sm" title="Delete"
-                                                        form="delete-{{$user->id}}"
-                                                        onclick="return confirm('Are you sure, would you like to delete the user?');">
+                                                <button class="btn btn-danger btn-sm" title="Delete" form="delete-{{$user->id}}"
+                                                    onclick="return confirm('Are you sure, would you like to delete the user?\nThis will also delete all related customers and sales data!');">
                                                     <i class="material-icons">delete</i>
                                                 </button>
                                             @else
@@ -100,6 +107,7 @@
                                 </tr>
                             </tfoot>
                         </table>
+                        {{-- @dump($jar_stock) --}}
                     </div>
                 </div>
                 <div class="card-footer justify-content-end">

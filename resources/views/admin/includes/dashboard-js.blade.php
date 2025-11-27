@@ -16,14 +16,31 @@
             // - CHART ACTIVITY ---------------------------------------------------------------------------
             //---------------------------------------------------------------------------------------------
             var line_chart_data =  {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Customer',
-                    backgroundColor: "rgba(239,43,65,0.7)",
-                    borderColor: "#ef2b41",
-                    borderWidth: 1,
-                    data: []
-                }]};
+                labels: @json($salesGraph->pluck('date')),
+                datasets: [
+                    {
+                        label: 'Sale',
+                        backgroundColor: "rgba(239,43,65,0.7)",
+                        borderColor: "#ef2b41",
+                        borderWidth: 1,
+                        data: @json($salesGraph->pluck('sale'))
+                    },
+                    {
+                        label: 'Payment',
+                        backgroundColor: "rgba(241,61,81,0.7)",
+                        borderColor: "#ef475a",
+                        borderWidth: 1,
+                        data: @json($salesGraph->pluck('paid'))
+                    },
+                    {
+                        label: 'Due',
+                        backgroundColor: "rgba(189,22,41,0.7)",
+                        borderColor: "#ae1324",
+                        borderWidth: 1,
+                        data: @json($salesGraph->pluck('due'))
+                    }
+                ]
+            };
 
             var line_chart_config = {
                 type: 'line',
@@ -35,7 +52,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Line Chart'
+                        text: 'Daily Sales Overview'
                     }
                 }
             };
