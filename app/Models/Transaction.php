@@ -78,7 +78,8 @@ class Transaction extends Model
 
     public function scopeThisMonth(Builder $query): void
     {
-        $query->where(DB::raw('MONTH(created_at)'), today()->month);
+        $query->where(DB::raw('MONTH(created_at)'), date('n'));
+        $query->where(DB::raw('YEAR(created_at)'), date('Y'));
     }
 
     public function scopeNotObsolete(Builder $query): void

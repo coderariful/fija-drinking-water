@@ -136,10 +136,13 @@ class EmployeeSummeryModal extends Component
 
         //dd($jar_stock);
 
-        $jar_in_count = $histories?->sum('in_quantity');
-        $jar_out_count = $histories?->sum('out_quantity');
+        $jar_in_count = $histories?->where('product_type', PRODUCT_WATER)->sum('in_quantity');
+        $jar_out_count = $histories?->where('product_type', PRODUCT_WATER)->sum('out_quantity');
 
         // $jar_stock = ($jar_in_count+$previous->jar_in)-($jar_out_count+$previous->jar_out);
+
+        // $jar_sale_count = $this->jarSaleCount();
+        $jar_sale_count = $jar_in_count;
 
         return view('livewire.employee-summery-modal', [
             'groups' => $groups,
@@ -155,7 +158,24 @@ class EmployeeSummeryModal extends Component
             'customer'=> Customer::when($this->customer_id, fn($q, $id) => $q->where('id', $id))->first(),
             'showCurrentFilter' => $this->showCurrentFilter(),
             'total_due' => max($total_sell - $total_paid, 0),
+            'jar_sale_count' => $jar_sale_count,
         ]);
+    }
+
+    public function jarSaleCount()
+    {
+        $dates = $this->getDatesForFilter();
+
+        return Transaction::query()
+            ->whereUserId($this->user?->id)
+            ->whereProductType(Product::WATER)
+            ->when($this->month, fn(Builder $query, $month) => $query->where(DB::raw('MONTH(created_at)'), $month))
+            ->when($this->year, fn(Builder $query, $year) => $query->where(DB::raw('YEAR(created_at)'), $year))
+            ->when($this->start_date, fn(Builder $query, $start_date) => $query->where(DB::raw('DATE(created_at)'), '>=', $start_date))
+            ->when($this->end_date, fn(Builder $query, $end_date) => $query->where(DB::raw('DATE(created_at)'), '<=',$end_date))
+            ->when($this->day, fn (Builder $query, $day) => $query->where(DB::raw('DATE(created_at)'), '>=', $dates[$day]))
+            ->when($this->customer_id, fn(Builder $query, $customer_id) => $query->where('customer_id', $customer_id))
+            ->sum('in_quantity');
     }
 
     private function getHistories(): ?Collection

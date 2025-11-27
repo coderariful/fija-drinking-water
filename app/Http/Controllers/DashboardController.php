@@ -116,20 +116,26 @@ class DashboardController extends Controller
         $total_sell = Transaction::query()->whereUserId($user_id)->sum("total_amount");
         $total_paid = Transaction::query()->whereUserId($user_id)->sum("paid_amount");
 
-        $jar_sale_today = Transaction::query()->today()->whereUserId($user_id)
-            ->where("product_type", Product::WATER)
+        $jar_sale_today = Transaction::query()
+            ->today()
+            ->whereUserId($user_id)
+            ->whereProductType(Product::WATER)
             ->sum('in_quantity');
 
-        $jar_sale_this_month = Transaction::query()->thisMonth()->whereUserId($user_id)
-            ->where("product_type", Product::WATER)
+        $jar_sale_this_month = Transaction::query()
+            ->thisMonth()
+            ->whereUserId($user_id)
+            ->whereProductType(Product::WATER)
             ->sum('in_quantity');
 
-        $collection_this_month = Transaction::query()->thisMonth()
-            ->where("user_id", $user_id)
+        $collection_this_month = Transaction::query()
+            ->thisMonth()
+            ->whereUserId($user_id)
             ->sum("paid_amount");
 
-        $sale_this_month = Transaction::query()->thisMonth()
-            ->where("user_id", $user_id)
+        $sale_this_month = Transaction::query()
+            ->thisMonth()
+            ->whereUserId($user_id)
             ->sum("total_amount");
 
         return view("user.dashboard", [

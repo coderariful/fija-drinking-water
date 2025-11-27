@@ -82,7 +82,7 @@
                 <strong>{{trans('Jar Stock')}}</strong>
             </div>
             <div class="text-center bg-light px-3 py-2 rounded" style="flex: 1 1 auto">
-                <p class="h3">{{$jar_in_count}}</p>
+                <p class="h3">{{$jar_sale_count}}</p>
                 <strong>{{trans('Jar Sale')}}</strong>
             </div>
             <div class="text-center bg-light px-3 py-2 rounded" style="flex: 1 1 auto">
@@ -104,7 +104,7 @@
             <table class="table table-sm table-bordered mb-3">
                 <thead>
                     <tr>
-                        <th class="align-middle text-center py-0" rowspan="2">{{trans('S/N')}}</th>
+                        <th class="align-middle text-center py-0" rowspan="2" nowrap>{{trans('S/N')}}</th>
                         <th class="align-middle text-center py-0" colspan="3">{{trans('Customer')}}</th>
                         <th class="align-middle text-center py-0" rowspan="2">{{trans('Date')}}</th>
                         <th class="align-middle text-center py-0" colspan="3">{{trans('Jar')}}</th>
@@ -146,7 +146,7 @@
                                         {{$history?->customer?->name}}<br>{{$history?->customer?->address}}
                                     </td>
                                     <td class="text-center py-0">{{round($history?->customer?->jar_rate, 2)}}/-</td>
-                                    <td class="text-center py-0">{{formatDate($history->created_at, DATE_FORMAT)}}</td>
+                                    <td class="text-center py-0" nowrap>{{formatDate($history->created_at, DATE_FORMAT)}}</td>
                                     <td class="text-center py-0">{{$history->in_quantity}}</td>
                                     <td class="text-center py-0">{{$history->out_quantity}}</td>
                                     <td class="text-center py-0">{{$history->stock_qty}}</td>
@@ -158,7 +158,7 @@
                             @if(count($histories) > 1)
                                 @foreach($histories->sortBy('created_at') as $history)
                                     <tr>
-                                        <td class="text-center py-0">{{formatDate($history->created_at, DATE_FORMAT)}}</td>
+                                        <td class="text-center py-0" nowrap>{{formatDate($history->created_at, DATE_FORMAT)}}</td>
                                         <td class="text-center py-0">{{$history->in_quantity}}</td>
                                         <td class="text-center py-0">{{$history->out_quantity}}</td>
                                         <td class="text-center py-0">{{$history->stock_qty}}</td>
