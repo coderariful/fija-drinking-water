@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Customer;
+use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Traits\CustomerQueryTrait;
@@ -126,19 +127,19 @@ class EmployeeSummeryModal extends Component
         $total_sell = $transactionQuery()->sum('total_amount');
         $total_paid = $transactionQuery()->sum('paid_amount');
 
-        /*
         $jar_stock = Transaction::query()
+            ->whereProductType(Product::WATER)
             ->selectRaw('(SUM(IFNULL(in_quantity, 0)) - SUM(IFNULL(out_quantity, 0))) AS stock_qty')
             ->where('user_id', $this->user?->id)
             ->first()
             ->stock_qty;
-        */
+
         //dd($jar_stock);
 
         $jar_in_count = $histories?->sum('in_quantity');
         $jar_out_count = $histories?->sum('out_quantity');
 
-        $jar_stock = ($jar_in_count+$previous->jar_in)-($jar_out_count+$previous->jar_out);
+        // $jar_stock = ($jar_in_count+$previous->jar_in)-($jar_out_count+$previous->jar_out);
 
         return view('livewire.employee-summery-modal', [
             'groups' => $groups,

@@ -81,8 +81,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('money/details', [AdminController::class, 'moneyDetails'])->name('money.details');
 
-
         Route::get('migrate/upgrade', [AdminController::class, 'migrateUpgrade']);
+
+        Route::get('~clear', [AdminController::class, 'clearCache'])->name('clear-cache');
     });
 
     Route::middleware(['admin'])->group(function () {

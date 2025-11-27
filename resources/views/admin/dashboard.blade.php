@@ -161,13 +161,41 @@
     </div>
 
     <div class="col-xl-3 col-sm-6">
-        <a href="{{route('admin.sales.index', ['range' => 'month', 'product' => 'jar'])}}">
-            <div class="card card-dark bg-deep-purple">
+        <a href="{{route('admin.customer.index', ['showDue' => true])}}">
+            <div class="card card-dark bg-brown">
                 <div class="card-body d-flex">
                     <i class="display-2 fa fa-users"></i>
                     <div class="ml-auto align-self-center text-right">
                         <span class="card-title mb-1">{{ __('Total Due') }}</span>
                         <h3 class="card-title font-montserrat mb-0">{{ $total_due }}</h3>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+        <a href="{{route('admin.sales.index')}}">
+            <div class="card card-dark bg-primary">
+                <div class="card-body d-flex">
+                    <i class="display-2 material-icons">people</i>
+                    <div class="ml-auto align-self-center text-right">
+                        <span class="card-title mb-1">{{ __('Sale This Month') }}</span>
+                        <h3 class="card-title font-montserrat mb-0">{{ $sale_this_month }}</h3>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+        <a href="{{route('admin.payments.index')}}">
+            <div class="card card-dark bg-success">
+                <div class="card-body d-flex">
+                    <i class="display-2 material-icons">people</i>
+                    <div class="ml-auto align-self-center text-right">
+                        <span class="card-title mb-1">{{ __('Collection This Month') }}</span>
+                        <h3 class="card-title font-montserrat mb-0">{{ $collection_this_month }}</h3>
                     </div>
                 </div>
             </div>

@@ -25,9 +25,8 @@ class DashboardController extends Controller
     {
         //$jar_stock = Purchase::where('product_type', Product::WATER)->selectRaw('SUM(in_quantity) as in_qty, SUM(out_quantity) as out_qty')->first();
         $total_sell_today = Transaction::query()->today()->sum("total_amount");
-        $total_collect_today = Transaction::query()
-            ->today()
-            ->sum("paid_amount");
+        $total_collect_today = Transaction::query()->today()->sum("paid_amount");
+
         $due_today = $total_sell_today - $total_collect_today;
 
         // $jar_in_qty = Transaction::query()->where('product_type', Product::WATER)->sum('in_quantity');
@@ -36,9 +35,7 @@ class DashboardController extends Controller
         $jar_stock = Transaction::query()
             ->where("product_type", Product::WATER)
             ->select([
-                DB::raw(
-                    "IFNULL(SUM(in_quantity) - SUM(out_quantity), 0) as total_stock",
-                ),
+                DB::raw("IFNULL(SUM(in_quantity) - SUM(out_quantity), 0) as total_stock"),
                 DB::raw("SUM(in_quantity) as in_qty"),
                 DB::raw("SUM(out_quantity) as out_qty"),
             ])
@@ -66,6 +63,9 @@ class DashboardController extends Controller
         $new_customer = Customer::whereDate("created_at", today())->count();
         $pending_customer = Customer::where("status", Customer::PENDING)->count();
 
+        $collection_this_month = Transaction::query()->thisMonth()->sum("paid_amount");
+        $sale_this_month = Transaction::query()->thisMonth()->sum("total_amount");
+
         $salesGraph = $this->getDailySalesGraph();
 
         //dd($salesGraph->toArray());
@@ -84,6 +84,8 @@ class DashboardController extends Controller
             "jar_sale_today" => round($jar_sale_today, 2),
             "jar_sale_this_month" => round($jar_sale_this_month, 2),
             "total_due" => max(round($total_due, 2), 0),
+            "collection_this_month" => round($collection_this_month, 2),
+            "sale_this_month" => round($sale_this_month, 2),
             "salesGraph" => $salesGraph,
         ]);
     }
@@ -92,25 +94,27 @@ class DashboardController extends Controller
     {
         $user_id = auth()->id();
 
+        $total_customer = Customer::whereUserId($user_id)->count();
+
+        $new_customer = Customer::whereUserId($user_id)
+            ->whereDate("created_at", today())
+            ->count();
+
+        $pending_customer = Customer::whereUserId($user_id)
+            ->where("status", Customer::PENDING)
+            ->count();
+
         $jar_stock = Transaction::query()
             ->whereRelation("customer", "user_id", $user_id)
             ->where("product_type", Product::WATER)
             ->selectRaw("SUM(in_quantity) as in_qty, SUM(out_quantity) as out_qty")
             ->first();
-        $total_sell_today = Transaction::query()->today()
-            ->where("user_id", $user_id)
-            ->sum("total_amount");
-        $total_collect_today = Transaction::query()->today()
-            ->where("user_id", $user_id)
-            ->sum("paid_amount");
+        $total_sell_today = Transaction::query()->today()->whereUserId($user_id)->sum("total_amount");
+        $total_collect_today = Transaction::query()->today()->whereUserId($user_id)->sum("paid_amount");
         $due_today = $total_sell_today - $total_collect_today;
 
-        $total_sell = Transaction::query()
-            ->where("user_id", $user_id)
-            ->sum("total_amount");
-        $total_paid = Transaction::query()
-            ->where("user_id", $user_id)
-            ->sum("paid_amount");
+        $total_sell = Transaction::query()->whereUserId($user_id)->sum("total_amount");
+        $total_paid = Transaction::query()->whereUserId($user_id)->sum("paid_amount");
 
         $jar_sale_today = Transaction::query()->today()->whereUserId($user_id)
             ->where("product_type", Product::WATER)
@@ -120,18 +124,20 @@ class DashboardController extends Controller
             ->where("product_type", Product::WATER)
             ->sum('in_quantity');
 
+        $collection_this_month = Transaction::query()->thisMonth()
+            ->where("user_id", $user_id)
+            ->sum("paid_amount");
+
+        $sale_this_month = Transaction::query()->thisMonth()
+            ->where("user_id", $user_id)
+            ->sum("total_amount");
+
         return view("user.dashboard", [
             "title" => trans("Dashboard"),
-            "total_customer" => Customer::where("user_id", $user_id)
-                ->where("user_id", $user_id)
-                ->count(),
+            "total_customer" => $total_customer,
             "total_employee" => 0,
-            "new_customer" => Customer::where("user_id", $user_id)
-                ->whereDate("created_at", today())
-                ->count(),
-            "pending_customer" => Customer::where("user_id", $user_id)
-                ->where("status", Customer::PENDING)
-                ->count(),
+            "new_customer" => $new_customer,
+            "pending_customer" => $pending_customer,
             "total_jar_stock" => $jar_stock->in_qty - $jar_stock->out_qty,
             "total_sell_today" => round($total_sell_today, 2),
             "total_collect_today" => round($total_collect_today, 2),
@@ -143,6 +149,8 @@ class DashboardController extends Controller
             "firstDayOfMonth" => today()->firstOfMonth()->format("Y-m-d"),
             "lastDayOfMonth" => today()->lastOfMonth()->format("Y-m-d"),
             "today" => today()->format("Y-m-d"),
+            'collection_this_month' => round($collection_this_month, 2),
+            'sale_this_month' => round($sale_this_month, 2),
         ]);
     }
 

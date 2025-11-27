@@ -26,7 +26,20 @@ class AdminController extends Controller
 
         return [
             'message' => 'Application upgraded successfully.',
-            'output' => trim(Artisan::output())
+            'output' => array_filter(array_map('trim', explode('\n', Artisan::output())), function ($value) {
+                return !empty(trim($value));
+            })
         ];
+    }
+
+    public function clearCache()
+    {
+        Artisan::call('optimize:clear');
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('view:clear');
+        Artisan::call('clear-compiled');
+
+        return back()->with('success', 'Application cache cleared successfully.');
     }
 }

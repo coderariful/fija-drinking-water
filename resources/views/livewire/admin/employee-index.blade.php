@@ -39,14 +39,6 @@
                                     @php
                                         $total_stock += $user->jar_stock ?? 0;
                                         $total_due += $user->due_amount ?? 0;
-                                        /* $jar_stock = DB::table('transactions')
-                                            ->where('product_type', \App\Models\Product::WATER)
-                                            ->select([
-                                                DB::raw("IFNULL(SUM(in_quantity) - SUM(out_quantity), 0) as total_stock"),
-                                                DB::raw("SUM(in_quantity) as in_qty"),
-                                                DB::raw("SUM(out_quantity) as out_qty"),
-                                            ])
-                                            ->first(); */
                                     @endphp
                                     <tr>
                                         <th class="text-center" width="1%">{{ paginationIndex($users, $loop->iteration) }}
