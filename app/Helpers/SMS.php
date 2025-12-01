@@ -106,6 +106,8 @@ class SMS
 
         $bulkData = $data ?? $this->bulkSmsData;
 
+        //dd($bulkData);
+
         if (config('sms.enabled') && !config('sms.sandbox')) {
             // if (config('sms.sandbox')) {
             //     $phone_number = config('sms.test_number');
@@ -129,11 +131,11 @@ class SMS
 
         //dd($bulkData);
 
+        File::append(base_path('sms.log'), "\n\nRecipient: Bulk SMS\nFrom: $smsMask\nDATA:\n" . json_encode($data));
+
         $countSms = count($bulkData);
         $this->message = "Total SMS to be sent: $countSms";
         $this->send(config('sms.test_number'), mask: true);
-
-        File::append(base_path('sms.log'), "\n\nRecipient: Bulk SMS\nFrom: $smsMask\nDATA:\n" . json_encode($data));
 
         return (object) ['status' => true];
     }
@@ -154,10 +156,14 @@ class SMS
         ]);
     }
 
+    public static function validatePhone($mobile)
+    {
+        return strlen($mobile) == 11 ? "88$mobile" : (strlen($mobile) == 10 ? "880$mobile" : $mobile);
+    }
+
     public function addBulkSmsMessage(array $data): void
     {
-        $mobile = $data['mobile'];
-        $data['mobile'] = strlen($mobile) == 11 ? "88$mobile" : (strlen($mobile) == 10 ? "880$mobile" : $mobile);
+        $data['mobile'] = self::validatePhone($data['mobile']);
         $this->bulkSmsData[] = $data;
     }
 }

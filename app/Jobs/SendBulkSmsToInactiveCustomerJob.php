@@ -13,9 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
 {
@@ -46,7 +46,7 @@ class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
             ->where('status', CUSTOMER_APPROVED)
             ->whereNotIn('id', $alreadySent)
             ->get()
-            ->filter(fn($customer) => intval($customer->phone)!=0)
+            ->filter(fn(Customer $customer) => intval($customer->phone)!=0)
             ->toArray();
 
         $this->template = SmsTemplate::firstWhere('template', 'inactive-customer-sms');
@@ -58,8 +58,8 @@ class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
     public function handle(): void
     {
         $customers = $this->customers;
-        // dd($customers[0]);
 
+        // dd($customers[0]);
 
         foreach (array_chunk($customers, 99) as $chunk) {
             $sdk = new SMS();
@@ -72,27 +72,11 @@ class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
                 ];
                 $message = SMS::parseTemplate($this->template->body, $params);
                 if (intval($customer['due_amount'])>0 && $customer['send_sms'] == 1) {
-                    $sentToday = false;
-                    //$sentToday = SmsSendBulk::where('customer_id', $customer['id'])->whereDate('created_at', today()->format('Y-m-d'))->first();
-                    if (!$sentToday) {
-                        $mobile = $customer['phone'];
-                        $data[] = [
-                            'mobile' => strlen($mobile) == 11 ? "88$mobile" : (strlen($mobile) == 10 ? "880$mobile" : $mobile),
-                            'sms' => $message
-                        ];
-                        /*$sdk->addBulkSmsMessage([
-                            'mobile' => $customer->phone,
-                            'sms' => $message
-                        ]);*/
-
-                        /*$history = SMS::saveInHistory($customer->id, $customer->phone, $message, 'bulk:inactive-customer-sms');
-                        SmsSendBulk::create([
-                            'group_id' => $this->groupId,
-                            'customer_id' => $customer->id,
-                            'history_id' => $history->id,
-                            'type' => 'group-chunk-sms',
-                        ]);*/
-                    }
+                    // $sentToday = SmsSendBulk::where('customer_id', $customer->id)->whereDate('created_at', today()->format('Y-m-d'))->first();
+                    $data[] = [
+                        'mobile' => SMS::validatePhone($customer['phone']),
+                        'sms' => $message
+                    ];
                 }
             }
 
@@ -101,15 +85,19 @@ class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
             try {
                 $response = $sdk->sendBulk($data, mask: true);
 
-                SmsSendBulk::create([
-                    'group_id' => $this->groupId,
-                    'type' => 'group-chunk-response',
-                    'response' => json_encode($response),
-                ]);
+                if (!config('sms.sandbox')) {
+                    SmsSendBulk::create([
+                        'group_id' => $this->groupId,
+                        'type' => 'group-chunk-response',
+                        'response' => json_encode($response),
+                    ]);
+                }
             } catch (\Exception $e) {
                 $error = "Error: {$e->getMessage()} File: {$e->getFile()} Line: {$e->getLine()}";
-                \Log::error($error);
-                SmsSendBulk::create(['group_id' => $this->groupId,'type' => 'group-chunk-error','response' => $error]);
+                Log::error($error);
+                if (!config('sms.sandbox')) {
+                    SmsSendBulk::create(['group_id' => $this->groupId, 'type' => 'group-chunk-error', 'response' => $error]);
+                }
             }
         }
     }

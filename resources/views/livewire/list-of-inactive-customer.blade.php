@@ -2,33 +2,38 @@
     <div class="col-12">
         <div class="card card-dark bg-dark">
             <div class="card-header d-block">
-                <form action="{{ $printUrl }}" onsubmit="return confirm('Are you sure to print?')" target="_blank">
-                    {{--<input type="hidden" name="view" value="on">--}}
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 d-flex justify-content-between align-items-center">
-                            <h6 class="card-title">{{$title}}</h6>
-                            <button type="button" class="btn btn-danger" onclick="return confirm('{{trans("Are you sure? You want to send SMS to all inactive customer!")}}') || event.stopImmediatePropagation()" wire:click.prevent="sendToAll">{{trans('Send SMS to All')}}</button>
-                            @if(auth_user()->user_type==0)
-                            <select class="form-control w-25" wire:model.live="employee_id" name="employee_id">
-                                <option value="">All</option>
-                                @foreach($employees as $employee)
-                                    <option value="{{$employee->id}}">{{$employee->name}}</option>
-                                @endforeach
-                            </select>
-                            @endif
-                        </div>
-                        <div class="col-md-6 col-sm-12 d-flex">
-                            <div class="input-group">
-                                {{--<input type="date" class="form-control w-25" wire:model.live="start_date" name="start_date">--}}
-                                {{--<input type="date" class="form-control w-25" wire:model.live="end_date" name="end_date">--}}
-                                <input type="text" class="form-control w-25" placeholder="Search Customer by Name or Phone" wire:model.live.debounce="keyword" name="keyword">
-                            </div>
-                            <button class="ml-2 btn btn-success">Print</button>
-                        </div>
+                <div class="d-flex justify-content-between">
+                    <h6 class="card-title">{{$title}}</h6>
+                    <div>
+                        <button type="button" class="btn btn-danger"
+                                onclick="return confirm('{{trans("Are you sure? You want to send SMS to all inactive customer!")}}') || event.stopImmediatePropagation()"
+                                wire:click.prevent="sendToAll">
+                            {{trans('Send SMS to All')}}
+                        </button>
                     </div>
-                 </form>
+                </div>
             </div>
             <div class="card-body position-relative">
+                <div class="mb-3">
+                    <form action="{{ $printUrl }}" onsubmit="return confirm('Are you sure to print?')" target="_blank">
+                        {{--<input type="hidden" name="view" value="on">--}}
+                        <div class="d-flex flex-wrap flex-sm-nowrap" style="gap: 5px">
+                            @if(auth_user()->user_type==0)
+                                <select class="form-control" wire:model.live="employee_id" name="employee_id">
+                                    <option value="">All</option>
+                                    @foreach($employees as $employee)
+                                        <option value="{{$employee->id}}">{{$employee->name}}</option>
+                                    @endforeach
+                                </select>
+                            @endif
+                            <input type="date" class="form-control" wire:model.live="start_date" name="start_date">
+                            <input type="date" class="form-control" wire:model.live="end_date" name="end_date">
+                            <input type="text" class="form-control" placeholder="Search Customer by Name or Phone"
+                                   wire:model.live.debounce="keyword" name="keyword">
+                            <button class="btn btn-success py-2 flex-shrink-0">Print</button>
+                        </div>
+                    </form>
+                </div>
                 <x-admin.table-processing-indicator/>
                 <div class="table-responsive style-scroll">
                     <table class="table table-striped table-bordered table-compact">

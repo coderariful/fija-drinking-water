@@ -57,7 +57,7 @@ class CustomerIndex extends Component
     public function getCustomers(): LengthAwarePaginator|array
     {
         $query = Customer::query()
-            ->withTransactions()
+            ->withTransactions($this->showDue)
             ->when($this->keyword, function (Builder $builder, $keyword) {
                 $builder->where('name', 'like', "%$keyword%")
                     ->orWhere('phone', 'like', "%$keyword%");
@@ -74,10 +74,10 @@ class CustomerIndex extends Component
             ->when(request('day'), function (Builder $builder) {
                 $builder->where(DB::raw('DATE(created_at)'), date('Y-m-d'));
             })
-            ->when($this->showDue, function (Builder $builder) {
+            /*->when($this->showDue, function (Builder $builder) {
                 // $builder->where(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);
                 $builder->having(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);
-            })
+            })*/
             ->where('status', '=', $this->status)
             ->orderBy('status')
             ->with('user')

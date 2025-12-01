@@ -140,7 +140,7 @@ class Customer extends Model
         $query->whereDate('created_at', today());
     }
 
-    public function scopeWithTransactions(Builder|Customer $query): void
+    public function scopeWithTransactions(Builder|Customer $query, $excludeZeroDue = false): void
     {
         $query->leftJoin('transactions as t', 'customers.id', '=', 't.customer_id')
             ->select([
@@ -152,6 +152,9 @@ class Customer extends Model
                 DB::raw('IFNULL(SUM(t.total_amount), 0) - IFNULL(SUM(t.paid_amount), 0) as due_amount'),
                 DB::raw('IFNULL(SUM(t.in_quantity), 0) - IFNULL(SUM(t.out_quantity), 0) as jar_stock'),
             ])
-            ->groupBy('customers.id');
+            ->groupBy('customers.id')
+            ->when($excludeZeroDue, function (Builder $builder) {
+                $builder->having(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);
+            });
     }
 }
