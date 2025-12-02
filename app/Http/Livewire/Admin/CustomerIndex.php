@@ -31,14 +31,16 @@ class CustomerIndex extends Component
         'update-customer-index' => '$refresh',
     ];
 
-    public function update_status(Customer $customer, $status)
+    public array $pageCustomerIds = [];
+
+    public function update_status(Customer $customer, $status): void
     {
         $customer->update(['status' => $status]);
 
         flash("Customer " . $customer::STATUS[$status]);
     }
 
-    public function filterDue($val)
+    public function filterDue($val): void
     {
         $this->showDue = $val;
     }
@@ -47,8 +49,11 @@ class CustomerIndex extends Component
     {
         $printUrl = route('print.customer-list');
 
+        $customers = $this->getCustomers();
+        $this->pageCustomerIds = collect($customers->items())->pluck('id')->all();
+
         return view('livewire.admin.customer-index', [
-            'customers' => $this->getCustomers(),
+            'customers' => $customers,
             'employees' => $this->getEmployees(),
             'printUrl' => $printUrl,
         ]);
@@ -59,29 +64,25 @@ class CustomerIndex extends Component
         $query = Customer::query()
             ->withTransactions($this->showDue)
             ->when($this->keyword, function (Builder $builder, $keyword) {
-                $builder->where('name', 'like', "%$keyword%")
-                    ->orWhere('phone', 'like', "%$keyword%");
+                $builder->where('customers.name', 'like', "%$keyword%")
+                    ->orWhere('customers.phone', 'like', "%$keyword%");
             })
             ->when($this->start_date, function (Builder $builder, $start_date) {
-                $builder->whereDate('issue_date', '>=', $start_date);
+                $builder->whereDate('customers.issue_date', '>=', $start_date);
             })
             ->when($this->end_date, function (Builder $builder, $end_date) {
-                $builder->whereDate('issue_date', '<=', $end_date);
+                $builder->whereDate('customers.issue_date', '<=', $end_date);
             })
             ->when($this->employee_id, function (Builder $builder, $employee_id) {
                 $builder->where('customers.user_id', '=', $employee_id);
             })
             ->when(request('day'), function (Builder $builder) {
-                $builder->where(DB::raw('DATE(created_at)'), date('Y-m-d'));
+                $builder->where(DB::raw('DATE(customers.created_at)'), date('Y-m-d'));
             })
-            /*->when($this->showDue, function (Builder $builder) {
-                // $builder->where(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);
-                $builder->having(DB::raw("(IFNULL(SUM(t.total_amount),0) - IFNULL(SUM(t.paid_amount),0))"), '>', 0);
-            })*/
-            ->where('status', '=', $this->status)
-            ->orderBy('status')
+            ->where('customers.status', '=', $this->status)
+            ->orderBy('customers.status')
             ->with('user')
-            ->latest('id');
+            ->latest('customers.id');
 
         // dd($query->take(10)->get());
 
@@ -95,8 +96,18 @@ class CustomerIndex extends Component
 
     function sendToAll(): void
     {
-        dispatch(new SendBulkSmsToAllJob);
+        dispatch(new SendBulkSmsToAllJob(excludeZeroDue: $this->showDue));
 
         flash('SMS sent to all customers');
+    }
+
+    function sendToCurrentPage(): void
+    {
+        dispatch(new SendBulkSmsToAllJob(
+            customerIds: $this->pageCustomerIds,
+            excludeZeroDue: $this->showDue
+        ));
+
+        flash('SMS sent to current page customers');
     }
 }

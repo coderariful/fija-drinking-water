@@ -3,7 +3,7 @@
        if(confirm('Are you sure you want to export all customer phone numbers?')){
             window.open(`{{ route('export.customer-phone-numbers') }}`, '_blank');
        }
-    }
+    },
 }">
     <div class="col-12">
         <div class="card card-dark bg-dark">
@@ -11,7 +11,7 @@
                 <div class="d-flex align-items-center flex-wrap">
                     <h6 class="card-title">{{$title}}</h6>
                     <div class="ml-auto">
-                        <button type="button" class="btn btn-danger" onclick="return confirm('{{trans('Are you sure? You want to send SMS to all!')}}') || event.stopImmediatePropagation()" wire:click.prevent="sendToAll">{{trans('Send SMS to All')}}</button>
+                        <button type="button" class="btn btn-danger" wire:click="$dispatch('send-due-sms-modal')">{{trans('Send Due SMS')}}</button>
                         <button type="button" class="btn btn-default" x-on:click="exportPhoneNumber"> Export Phone Number </button>
                     </div>
                 </div>
@@ -23,7 +23,7 @@
                         <input type="hidden" name="view" value="on">
                         @endif
                         <input type="hidden" name="showDue" value="{{$showDue ? 'true' : 'false'}}">
-                        <div class="d-flex justify-content-end flex-wrap flex-md-nowrap">
+                        <div class="d-flex justify-content-center flex-wrap flex-md-nowrap">
                             @if($showDue)
                                 <button type="button" class="btn btn-primary" wire:click="filterDue(false)">{{trans('Show All')}}</button>
                             @else
@@ -45,7 +45,7 @@
                     </form>
                 </div>
                 <div class="position-absolute w-100 h-100 pt-5" wire:loading
-                     style="z-index: 99999; top: 0; left: 0; background: rgba(0, 0, 0, .5); backdrop-filter: blur(2px)">
+                     style="z-index: 99; top: 0; left: 0; background: rgba(0, 0, 0, .5); backdrop-filter: blur(2px)">
                     <div class="py-4 text-center bg-light-blue my-5">
                         <h3 class="text-white mb-0">Processing</h3>
                     </div>
@@ -198,9 +198,80 @@
 @script
 <script>
     $(function() {
+
+        Alpine.data('sendDueSms', () => ({
+            sendToAllCustomer() {
+                const message = "You want to send due SMS to all customers!";
+                this.confirmBeforeSend(message, $wire.sendToAll);
+            },
+            sendToCurrentPage() {
+                const message = "You want to send due SMS to all customers in this page!";
+                this.confirmBeforeSend(message, $wire.sendToCurrentPage);
+            },
+            confirmBeforeSend(message, wireCallback) {
+                swal({
+                    title: "Are you sure?",
+                    text: message,
+                    icon: "info",
+                    buttons: ["No, cancel", "Yes, send"],
+                    dangerMode: true,
+                }).then((check) => {
+                    if (check && wireCallback) {
+                        wireCallback().then(() => {
+                            bootbox.hideAll();
+                        }).catch(() => {
+                            toastr.error("An error occurred while sending Due SMS.");
+                            bootbox.hideAll();
+                        });
+
+                        bootbox.hideAll();
+                        bootbox.dialog({
+                            size: 'small',
+                            message: `
+                                <div class="py-4 text-center my-5">
+                                    <i class="fa fa-spinner fa-spin fa-3x mb-3"></i>
+                                    <p class="mb-0">Sending Due SMS. Please wait...</p>
+                                </div>
+                            `,
+                            closeButton: false,
+                            onEscape: false,
+                            backdrop: 'static',
+                            centerVertical: true,
+                        });
+                    }
+                });
+            }
+        }))
+
+        function confirmSentDueSMS() {
+            const message = `
+                <div class="py-3 d-flex justify-content-center flex-column flex-sm-row" style="gap: 5px" x-data="sendDueSms">
+                    <button class="btn btn-primary" x-on:click="sendToAllCustomer">Send Due SMS to All Customer</button>
+                    <button class="btn btn-primary" x-on:click="sendToCurrentPage">Send Due SMS to Current Page</button>
+                </div>
+            `;
+
+            bootbox.dialog({
+                size: 'medium',
+                title: 'Send Due SMS',
+                message: message,
+                closeButton: true,
+                onEscape: true,
+                backdrop: true,
+                buttons: {
+                    cancel: {
+                        label: 'Close',
+                        className: 'btn-dark',
+                    },
+                },
+            });
+        }
+
         $(document).on('sms-sent', function() {
             $("#sms_message").val("");
         });
+
+        $wire.on('send-due-sms-modal', confirmSentDueSMS)
     });
 </script>
 @endscript

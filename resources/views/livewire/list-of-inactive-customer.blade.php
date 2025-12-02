@@ -4,7 +4,12 @@
             <div class="card-header d-block">
                 <div class="d-flex justify-content-between">
                     <h6 class="card-title">{{$title}}</h6>
-                    <div>
+                    <div class="d-flex" style="gap: 5px">
+                        <button type="button" class="btn btn-danger"
+                                onclick="return confirm('{{trans("Are you sure? You want to send SMS to inactive customer in this page!")}}') || event.stopImmediatePropagation()"
+                                wire:click.prevent="sendToAllInPage">
+                            {{trans('Send SMS to All (in Page)')}}
+                        </button>
                         <button type="button" class="btn btn-danger"
                                 onclick="return confirm('{{trans("Are you sure? You want to send SMS to all inactive customer!")}}') || event.stopImmediatePropagation()"
                                 wire:click.prevent="sendToAll">
@@ -34,7 +39,7 @@
                         </div>
                     </form>
                 </div>
-                <x-admin.table-processing-indicator/>
+                <x-admin.table-processing-indicator :middle="true"/>
                 <div class="table-responsive style-scroll">
                     <table class="table table-striped table-bordered table-compact">
                         <thead>

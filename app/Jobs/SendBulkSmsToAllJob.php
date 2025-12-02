@@ -6,6 +6,7 @@ use App\Helpers\SMS;
 use App\Models\Customer;
 use App\Models\SmsSendBulk;
 use App\Models\SmsTemplate;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -41,6 +42,7 @@ class SendBulkSmsToAllJob implements ShouldQueue
             ->where('send_sms', 1)
             ->where('status', CUSTOMER_APPROVED)
             ->whereNotIn('id', $alreadySent)
+            ->when($customerIds, fn($q) => $q->whereIn('customer_id', $customerIds))
             ->oldest()
             ->get();
 
@@ -55,8 +57,6 @@ class SendBulkSmsToAllJob implements ShouldQueue
     {
         $customers = $this->customers->filter(fn(Customer $customer) => intval($customer->phone)!=0)->all();
 
-        //dd($customers);
-
         foreach (array_chunk($customers, 99) as $chunk) {
             $sdk = new SMS();
 
@@ -64,25 +64,19 @@ class SendBulkSmsToAllJob implements ShouldQueue
                 $params = SMS::getParameters($customer, 'due-sms');
                 $message = SMS::parseTemplate($this->template->body, $params);
                 if (intval($customer->due_amount)>0 && $customer->send_sms) {
-                    // $sentToday = SmsSendBulk::where('customer_id', $customer->id)->whereDate('created_at', today()->format('Y-m-d'))->first();
                     $sdk->addBulkSmsMessage([
                         'mobile' =>  $customer->phone,
                         'sms' => $message
                     ]);
-                    /*if (!$sentToday) {
-                        $history = SMS::saveInHistory($customer->id, $customer->phone, $message, 'bulk:due-sms');
-                        SmsSendBulk::create([
-                            'group_id' => $this->groupId,
-                            'customer_id' => $customer->id,
-                            'history_id' => $history->id,
-                            'type' => 'group-chunk-sms',
-                        ]);
-                    }*/
                 }
             }
 
             try {
                 $response = $sdk->sendBulk(mask: true);
+
+                //if ($response->status) {
+                //    flash($response->message);
+                //}
 
                 if (!config('sms.sandbox')) {
                     SmsSendBulk::create([
@@ -91,7 +85,7 @@ class SendBulkSmsToAllJob implements ShouldQueue
                         'response' => json_encode($response),
                     ]);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $error = "Error: {$e->getMessage()} File: {$e->getFile()} Line: {$e->getLine()}";
                 Log::error($error);
                 if (!config('sms.sandbox')) {

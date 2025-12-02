@@ -55,11 +55,9 @@
 </head>
 
 <body>
-    <!------------------------------------------------------------------------------------------------>
-    <!-- WRAPPER ------------------------------------------------------------------------------------->
+
     <div id="wrapper" class="wrapper-left-fixed wrapper-header-fixed">
-        <!------------------------------------------------------------------------------------------------>
-        <!-- WRAPPER LOAD -------------------------------------------------------------------------------->
+
        <div id="wrapper-load">
            <div class="load-container">
                <img class="mb-3" src="{{ asset('backend/assets/img/logo/logo.png') }}" width="80"/>
@@ -69,15 +67,9 @@
                <div class="load-bard"></div>
            </div>
        </div>
-        <!-- END WRAPPER LOAD ---------------------------------------------------------------------------->
 
-        <!-- WRAPPER HEADER ------------------------------------------------------------------------------>
         @include('admin.includes.header')
-        <!-- END WRAPPER HEADER -------------------------------------------------------------------------->
 
-
-        <!------------------------------------------------------------------------------------------------>
-        <!-- WRAPPER LEFT -------------------------------------------------------------------------------->
         <div id="wrapper-left">
             <!-- SIDEBAR -->
             <div class="sidebar sidebar-dark sidebar-danger bg-dark">
@@ -119,9 +111,9 @@
                 </div>
             </div>
         </div>
-        <!-- END WRAPPER LEFT ---------------------------------------------------------------------------->
-        <!------------------------------------------------------------------------------------------------>
-        <!-- WRAPPER CONTENT ----------------------------------------------------------------------------->
+
+
+
         <div id="wrapper-content">
 
             <div class="container-fluid">
@@ -130,66 +122,48 @@
 
             </div>
         </div>
-        <!-- END WRAPPER CONTENT ------------------------------------------------------------------------->
 
-        <!-- WRAPPER SLIDE ------------------------------------------------------------------------------->
+
         <div id="wrapper-slide">
             <button data-toggle="slideUp" data-target="body" class="btn btn-danger btn-flash-dark ">
                 <i class="material-icons">keyboard_arrow_up</i>
             </button>
         </div>
-        <!-- END WRAPPER SLIDE --------------------------------------------------------------------------->
 
-        <!-- WRAPPER FOOTER ------------------------------------------------------------------------------>
+
         @include('admin.includes.footer')
-        <!-- END WRAPPER FOOTER -------------------------------------------------------------------------->
+
     </div>
 
-    <!-- END WRAPPER --------------------------------------------------------------------------------->
-    <!------------------------------------------------------------------------------------------------>
-    <!-- JAVASCRIPT ---------------------------------------------------------------------------------->
-    <!-- JQUERY -->
+
+    {{-- JAVASCRIPT ----------------------------------------------------------------------------------}}
     <script src="{{asset('jquery/jquery.min.js')}}"></script>
-    <!-- JQUERY UI -->
     <script src="{{asset('backend/assets/libraries/jquery-ui/jquery-ui.min.js')}}"></script>
-    <!-- POPPER -->
     <script src="{{asset('jquery/popper.min.js')}}"></script>
-    <!-- BOOTSTRAP - V 4.0.0 -->
     <script src="{{asset('bootstrap/js/bootstrap.min.js')}}"></script>
-    <!-- CHARTJS -->
     <script src="{{asset('backend/assets/plugin/chartJs/Chart.bundle.min.js')}}"></script>
-    <!-- CIRCLIFUL MASTER -->
     <script src="{{asset('backend/assets/plugin/circliful/js/jquery.circliful.js')}}"></script>
-    <!-- OVERLAYSCROLLBARS -->
     <script src="{{asset('backend/assets/plugin/OverlayScrollbars/js/jquery.overlayScrollbars.min.js')}}"></script>
-    <!-- DATA TABLES -->
     <script src="{{asset('backend/assets/plugin/DataTables/1.10.16/js/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('backend/assets/plugin/DataTables/1.10.16/js/dataTables.bootstrap4.min.js')}}"></script>
-    <!-- JQUERY-NOTIFY -->
     <script src="{{asset('backend/assets/plugin/notify/js/notify.js')}}"></script>
-    <!-- JVECTORMAP -->
     <script src="{{asset('backend/assets/plugin/jVectormap/jquery-jvectormap-2.0.3.min.js')}}"></script>
     <script src="{{asset('backend/assets/plugin/jVectormap/jquery-jvectormap-world-mill-en.js')}}"></script>
     <script src="{{asset('backend/assets/plugin/jVectormap/jquery-jvectormap-us-aea.js')}}"></script>
     <script src="{{asset('backend/assets/plugin/jVectormap/jquery-jvectormap-ca-lcc.js')}}"></script>
     <script src="{{asset('backend/assets/plugin/jVectormap/jquery-jvectormap-fr-regions-mill.js')}}"></script>
-    <!-- BOOTSTRAP SLIDER -->
     <script src="{{asset('backend/assets/plugin/bootstrap-slider/bootstrap-slider.min.js')}}"></script>
-    <!-- TINY COLOR PICKER -->
     <script src="{{asset('backend/assets/plugin/tinyColorPicker/jqColorPicker.min.js')}}"></script>
-    <!-- SUMOSELECT -->
     <script src="{{asset('backend/assets/plugin/sumoselect/jquery.sumoselect.min.js')}}"></script>
-    <!-- INPUTMASK -->
     <script src="{{asset('backend/assets/libraries/jquery-inputmask/jquery.inputmask.bundle.js')}}"></script>
-    <!-- PLUGINS -->
     <script src="{{asset('backend/assets/js/plugin.js')}}?v={{config('app.version')}}"></script>
-    <!-- IMAGE UPLOADER -->
     <script src="{{asset('backend/assets/js/image-uploader.min.js')}}"></script>
     <!-- FUNCTIONS -->
     <script src="{{asset('backend/assets/js/functions.js')}}?v={{config('app.version')}}"></script>
-    <!-- sweet alert -->
+
     <script src="{{asset('notification_assets/js/sweetalert.min.js')}}"></script>
-    <!-- END JAVASCRIPT ------------------------------------------------------------------------------>
+    <script src="{{asset('notification_assets/js/toastr.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
 
     @livewireScripts
 

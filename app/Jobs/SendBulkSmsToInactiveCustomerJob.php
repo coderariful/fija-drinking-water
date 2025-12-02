@@ -27,7 +27,7 @@ class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public $groupId = null)
+    public function __construct(public $groupId = null, $customerIds = null, $excludeZeroDue = false)
     {
         $this->groupId = $groupId ?? uniqid();
 
@@ -37,7 +37,7 @@ class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
             ->pluck('customer_id');
 
         $this->customers = Customer::query()
-            ->withTransactions()
+            ->withTransactions($excludeZeroDue)
             ->addSelect(DB::raw('MAX(t.created_at) as last_transaction_date'))
             ->whereDoesntHave('sales', function (Builder $builder) {
                 $builder->whereDate('created_at', '>', today()->subDays(7));
@@ -45,6 +45,7 @@ class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
             ->where('send_sms', 1)
             ->where('status', CUSTOMER_APPROVED)
             ->whereNotIn('id', $alreadySent)
+            ->when($customerIds, fn($q) => $q->whereIn('customer_id', $customerIds))
             ->get()
             ->filter(fn(Customer $customer) => intval($customer->phone)!=0)
             ->toArray();
@@ -72,7 +73,6 @@ class SendBulkSmsToInactiveCustomerJob implements ShouldQueue
                 ];
                 $message = SMS::parseTemplate($this->template->body, $params);
                 if (intval($customer['due_amount'])>0 && $customer['send_sms'] == 1) {
-                    // $sentToday = SmsSendBulk::where('customer_id', $customer->id)->whereDate('created_at', today()->format('Y-m-d'))->first();
                     $data[] = [
                         'mobile' => SMS::validatePhone($customer['phone']),
                         'sms' => $message

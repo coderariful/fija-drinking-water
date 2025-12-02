@@ -33,11 +33,20 @@ class ListOfInactiveCustomer extends Component
         'update-customer-index' => '$refresh',
     ];
 
+    public array $pageCustomerIds;
+
     public function render(): View
     {
         $layout = auth()->user()->user_type==0 ? 'admin.layouts.master' : 'user.layouts.master';
+
+        $customers = $this->getCustomers();
+
+        if (auth()->user()->user_type==0) {
+            $this->pageCustomerIds = collect($customers->items())->pluck('id')->toArray();
+        }
+
         return view('livewire.list-of-inactive-customer',[
-            'customers' => $this->getCustomers(),
+            'customers' => $customers,
             'employees' => $this->getEmployees(),
             'printUrl' => route('print.customer-list.inactive'),
         ])->layout($layout, [
@@ -93,7 +102,24 @@ class ListOfInactiveCustomer extends Component
 
     function sendToAll(): void
     {
+        if (auth()->user()->user_type!=0) {
+            flash('You are not authorized for this action.');
+            return;
+        }
+
         dispatch(new SendBulkSmsToInactiveCustomerJob());
+
+        flash('SMS sent to all inactive customers');
+    }
+
+    function sendToAllInPage(): void
+    {
+        if (auth()->user()->user_type!=0) {
+            flash('You are not authorized for this action.');
+            return;
+        }
+
+        dispatch(new SendBulkSmsToInactiveCustomerJob(customerIds: $this->pageCustomerIds));
 
         flash('SMS sent to all inactive customers');
     }

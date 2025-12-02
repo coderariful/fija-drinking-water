@@ -95,7 +95,7 @@ class SMS
 
         File::append(base_path('sms.log'), "\n\nRecipient: $phone_number\nFrom: $smsMask\nMessage:\n$this->message");
 
-        return (object) ['status' => true];
+        return (object) ['status' => true, 'message' => 'SMS sent in sandbox mode'];
     }
 
     public function sendBulk($data = null,  bool|string $mask = null)
@@ -109,10 +109,6 @@ class SMS
         //dd($bulkData);
 
         if (config('sms.enabled') && !config('sms.sandbox')) {
-            // if (config('sms.sandbox')) {
-            //     $phone_number = config('sms.test_number');
-            //     $message ="Recipient: $phone_number\n\n$this->message";
-            // }
 
             $data = json_encode($bulkData);
 
@@ -129,15 +125,17 @@ class SMS
             return json_decode($response);
         }
 
-        //dd($bulkData);
-
-        File::append(base_path('sms.log'), "\n\nRecipient: Bulk SMS\nFrom: $smsMask\nDATA:\n" . json_encode($data));
+        // dd($bulkData);
 
         $countSms = count($bulkData);
-        $this->message = "Total SMS to be sent: $countSms";
+        $json = json_encode($bulkData);
+
+        File::append(base_path('sms.log'), "\n\nRecipient: Bulk SMS\nFrom: $smsMask\nDATA:\n$json\nTotal SMS: $countSms");
+
+        $this->message = "Test SMS\nTotal SMS to be sent: $countSms";
         $this->send(config('sms.test_number'), mask: true);
 
-        return (object) ['status' => true];
+        return (object) ['status' => true, 'message' => 'SMS sent in sandbox mode'];
     }
 
     public function setMessage(string $message): SMS

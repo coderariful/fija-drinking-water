@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->call([CronSMS::class, 'dailySMS']);//->dailyAt("12:00");
 
-        $schedule->call([CronSMS::class, 'monthlySMS'])->lastDayOfMonth("12:00");
+        // $schedule->call([CronSMS::class, 'monthlySMS'])->lastDayOfMonth("12:00");
     }
 
     /**
